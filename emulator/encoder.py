@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from blowfish import blowfish
+from .blowfish import blowfish
 import base64
 import struct
 import json
 import zlib
 import warnings
-import settings
+import .settings
 
 class Encoder(object):
 	"""docstring for Encoder"""

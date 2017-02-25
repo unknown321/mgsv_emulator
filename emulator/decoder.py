@@ -1,9 +1,9 @@
-from blowfish import blowfish
+from .blowfish import blowfish
 import base64
 import struct
 import json
 import zlib
-import settings
+import .settings
 
 # D:\Users\unknown\Desktop\WiresharkPortable\App\Wireshark\tshark.exe -r J:\mgs\ssl\dump_with_a_key.cap.pcap -o ssl.keys_list:"0.0.0.0","443","http","D:\Users\unknown\Desktop\OZH.pem" -2  -Y "ip.addr == 210.149.133.135 and http" -T fields -e http.file_data > C:\testout.txt
 # replace %2B with +

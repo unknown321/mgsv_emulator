@@ -1,8 +1,8 @@
-from encoder import Encoder
-from decoder import Decoder
+from .encoder import Encoder
+from .decoder import Decoder
 import base64
-from client_commands import client_commands, urls
-from httpclient import HttpClient
+from .client_commands import client_commands, urls
+from .httpclient import HttpClient
 
 class Client(object):
 	"""mgsv client"""

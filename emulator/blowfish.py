@@ -2,8 +2,8 @@
 import os.path
 import struct
 import ctypes
-import encoder_consts
 import copy
+import .encoder_consts
 
 class blowfish(object):
 	"""docstring for blowfish"""
