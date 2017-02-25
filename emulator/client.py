@@ -80,4 +80,3 @@ class Client(object):
 	def get_info_list(self):
 		comm = 'CMD_GET_INFORMATIONLIST'
 		return [self.send_command(comm)]
-
