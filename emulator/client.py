@@ -76,3 +76,8 @@ class Client(object):
 	def get_login_data(self):
 		comm = 'CMD_GET_LOGIN_PARAM'
 		return [self.send_command(comm)]
+
+	def get_info_list(self):
+		comm = 'CMD_GET_INFORMATIONLIST'
+		return [self.send_command(comm)]
+
