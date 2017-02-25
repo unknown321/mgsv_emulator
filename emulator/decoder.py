@@ -4,6 +4,11 @@ import struct
 import json
 import zlib
 from . import settings
+import sys
+
+DECODE_PACK = '>l'
+if sys.maxsize > 2**32:
+	DECODE_PACK = '>L'
 
 # D:\Users\unknown\Desktop\WiresharkPortable\App\Wireshark\tshark.exe -r J:\mgs\ssl\dump_with_a_key.cap.pcap -o ssl.keys_list:"0.0.0.0","443","http","D:\Users\unknown\Desktop\OZH.pem" -2  -Y "ip.addr == 210.149.133.135 and http" -T fields -e http.file_data > C:\testout.txt
 # replace %2B with +
@@ -57,8 +62,8 @@ class Decoder(object):
 			y = struct.unpack('>l', chunk[4:8])[0]
 			x,y = blow.blowfish_decipher(x, y)
 
-			x_text = struct.pack('>l',x)
-			y_text = struct.pack('>l',y)
+			x_text = struct.pack(DECODE_PACK,x)
+			y_text = struct.pack(DECODE_PACK,y)
 			
 			full_text += x_text + y_text
 			offset = offset+8
