@@ -11,8 +11,20 @@ Decryption process:
 
  * decode base64-encoded message into bytestream
  * decode bytestream using static blowfish key (hardcoded into exe) into json message
- * if 'session_crypto' is true, then contents of message['data'] are encrypted with session cryptokey provided by server during auth phase
+ * message['data'] is usually base64-decoded message
+ * if 'session_crypto' is true, then contents of message['data'] are encrypted with blowfish using session cryptokey provided by server during auth phase
  * if 'compress' is true, then decoded message['data'] is also compressed using zlib
+
+Message with compression and encryption:
+
+    base64(
+        blowfish_static(
+            base64(
+                blowfish_session(
+                    zlib('test')
+                )
+            )
+        )
 
 Encryption process is the same, but backwards.
 
