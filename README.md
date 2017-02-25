@@ -9,10 +9,10 @@ Unfortunately it slightly differs from realisation provided here (https://www.sc
 
 Decryption process:
 
-*decode base64-encoded message into bytestream
-*decode bytestream using static blowfish key (hardcoded into exe) into json message
-*if 'session_crypto' is true, then contents of message['data'] are encrypted with session cryptokey provided by server during auth phase
-*if 'compress' is true, then decoded message['data'] is also compressed using zlib
+ * decode base64-encoded message into bytestream
+ * decode bytestream using static blowfish key (hardcoded into exe) into json message
+ * if 'session_crypto' is true, then contents of message['data'] are encrypted with session cryptokey provided by server during auth phase
+ * if 'compress' is true, then decoded message['data'] is also compressed using zlib
 
 Encryption process is the same, but backwards.
 
@@ -21,6 +21,7 @@ Provide your credentials in settings.py (steamid and magic_hash parsed from prev
 Dump static_key from exe (or ask me very nicely).
 
 Client:
+
     from emulator import Client
     c = Client()
     c.login()
