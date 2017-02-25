@@ -5,7 +5,12 @@ import struct
 import json
 import zlib
 import warnings
-import .settings
+from . import settings
+import sys
+
+ENCODE_PACK = '>l'
+if sys.maxsize > 2**32:
+	ENCODE_PACK = '>L'
 
 class Encoder(object):
 	"""docstring for Encoder"""
@@ -37,8 +42,8 @@ class Encoder(object):
 			y = struct.unpack('>l', chunk[4:8].encode())[0]
 			x,y = blow.blowfish_encipher(x, y)
 
-			x_text = struct.pack('>l',x)
-			y_text = struct.pack('>l',y)
+			x_text = struct.pack(ENCODE_PACK,x)
+			y_text = struct.pack(ENCODE_PACK,y)
 			
 			full_text += x_text + y_text
 			offset = offset+8

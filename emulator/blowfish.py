@@ -3,7 +3,7 @@ import os.path
 import struct
 import ctypes
 import copy
-import .encoder_consts
+from . import encoder_consts
 
 class blowfish(object):
 	"""docstring for blowfish"""
@@ -26,7 +26,8 @@ class blowfish(object):
 		b = x >> 16 & 0x00FF
 		c = x >> 8 & 0x00FF
 		d = x & 0x00FF
-		
+
+		# on 64-bit systems there is an error without '& 0xFFFFFFFF'
 		y = (self.__S__[0][a] + self.__S__[1][b]) & 0xFFFFFFFF
 		y = y ^ self.__S__[2][c]	& 0xFFFFFFFF
 		y = (y + self.__S__[3][d]) & 0xFFFFFFFF
@@ -34,24 +35,24 @@ class blowfish(object):
 
 	def blowfish_encipher(self, xl, xr):
 		for i in range(0, self.__N__):
-			xl = xl ^ self.__P__[i] & 0xFFFFFFFF
-			xr = self.__F__(xl) ^ xr & 0xFFFFFFFF
+			xl = xl ^ self.__P__[i]
+			xr = self.__F__(xl) ^ xr
 			xl,xr = xr,xl
 
 		xl,xr = xr,xl
-		xr = xr ^ self.__P__[self.__N__] & 0xFFFFFFFF
-		xl = xl ^ self.__P__[self.__N__ + 1] & 0xFFFFFFFF
+		xr = xr ^ self.__P__[self.__N__]
+		xl = xl ^ self.__P__[self.__N__ + 1]
 		return xl, xr
 
 	def blowfish_decipher(self, xl, xr):
 		for i in range(self.__N__+1, 1, -1):
-			xl = xl ^ self.__P__[i] & 0xFFFFFFFF
-			xr = self.__F__(xl) ^ xr & 0xFFFFFFFF
+			xl = xl ^ self.__P__[i]
+			xr = self.__F__(xl) ^ xr
 			xl,xr = xr,xl
 
 		xl,xr = xr,xl
-		xr = xr ^ self.__P__[1] & 0xFFFFFFFF
-		xl = xl ^ self.__P__[0] & 0xFFFFFFFF
+		xr = xr ^ self.__P__[1]
+		xl = xl ^ self.__P__[0]
 		return self.__to_clong__(xl), self.__to_clong__(xr)
 
 	def initialize(self, key):

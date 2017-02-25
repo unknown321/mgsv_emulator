@@ -1,5 +1,5 @@
 from collections import OrderedDict
-import .settings
+from . import settings
 
 urls = {
 	"/tppstm/gate":[
