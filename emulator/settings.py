@@ -18,3 +18,7 @@ STEAM_TICKET = "FAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 # your local ip, was the same in my case
 EX_IP = 'x.x.x.x'
 IN_IP = 'x.x.x.x'
+
+#log stuff
+LOG_PATH = '/home/unknown/mgsv_nuke_watcher/logs/mainlog'
+LOG_FORMAT = '[{curdate}] {data}\n'

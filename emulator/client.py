@@ -3,6 +3,8 @@ from .decoder import Decoder
 import base64
 from .client_commands import client_commands, urls
 from .httpclient import HttpClient
+from datetime import datetime
+from . import settings
 
 class Client(object):
 	"""mgsv client"""
@@ -45,12 +47,22 @@ class Client(object):
 			if command in urls[url]:
 				print(command, url)
 				r = httpclient.send(encrypted_request, url)
-				if r.status_code != 200:
-					print(r.status_code, r.text)
-					break
-				text = self.__response_decode__(r)
-				self.__response_get_keys__(text)
-				return text
+				return self.__parse_response__(r)
+
+	def __log__(self, data):
+		f = open(settings.LOG_PATH,'a')
+		f.write(settings.LOG_FORMAT.format(curdate=str(datetime.now()), data=str(data)))
+		f.close()
+
+	def __parse_response__(self, r):
+		if r.status_code != 200:
+			print(r.status_code, r.text)
+			return {}
+		text = self.__response_decode__(r)
+		if text['data']['result'] != 'NOERR':
+			self.__log__([r.url, text])
+		self.__response_get_keys__(text)
+		return text
 
 
 	def login(self):
@@ -71,7 +83,6 @@ class Client(object):
 	def get_nuclear(self):
 		comm = 'CMD_GET_ABOLITION_COUNT'
 		return [self.send_command(comm)]
-		
 
 	def get_login_data(self):
 		comm = 'CMD_GET_LOGIN_PARAM'
