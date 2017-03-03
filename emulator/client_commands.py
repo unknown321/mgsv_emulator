@@ -40,14 +40,26 @@ urls = {
 		"CMD_SYNC_SOLDIER_BIN",
 		"CMD_UPDATE_SESSION",
 		# "CMD_SYNC_MOTHER_BASE"  # not implemented, too big
+		"CMD_SEND_MISSION_RESULT",
+		"CMD_GET_DAILY_REWARD",
+		"CMD_GET_FOB_REWARD_LIST",
+		"CMD_GET_PLAYER_PLATFORM_LIST",
+		"CMD_SEND_ONLINE_CHALLENGE_TASK_STATUS",
+		"CMD_GET_FOB_TARGET_DETAIL",
+		"CMD_SNEAK_MOTHER_BASE",
+		"CMD_GET_FOB_PARAM",
+		"CMD_CHECK_SERVER_ITEM_CORRECT",
+		"CMD_ACTIVE_SNEAK_MOTHER_BASE",
+		"CMD_OPEN_WORMHOLE",
+		"CMD_SEND_SNEAK_RESULT",
+		"CMD_GET_RANKING",
+		"CMD_EXCHANGE_LEAGUE_POINT2",
+		"CMD_ADD_FOLLOW",
+		"CMD_DELETE_FOLLOW"
 	]
 }
 
-
 not_implemented = [
-
-	"CMD_ACTIVE_SNEAK_MOTHER_BASE",
-	"CMD_ADD_FOLLOW",
 	"CMD_APPROVE_STEAM_SHOP",
 	"CMD_CALC_COST_FOB_DEPLOY_REPLACE",
 	"CMD_CALC_COST_TIME_REDUCTION",
@@ -56,12 +68,10 @@ not_implemented = [
 	"CMD_CANCEL_SHORT_PFLEAGUE",
 	"CMD_CHECK_CONSUME_TRANSACTION",
 	"CMD_CHECK_DEFENCE_MOTHERBASE",
-	"CMD_CHECK_SERVER_ITEM_CORRECT",
 	"CMD_COMMIT_CONSUME_TRANSACTION",
 	"CMD_CONSUME_RESERVE",
 	"CMD_CREATE_NUCLEAR",
 	"CMD_CREATE_PLAYER",
-	"CMD_DELETE_FOLLOW",
 	"CMD_DELETE_TROOPS_LIST",
 	"CMD_DEPLOY_FOB_ASSIST",
 	"CMD_DEPLOY_MISSION",
@@ -72,7 +82,6 @@ not_implemented = [
 	"CMD_ELAPSE_COMBAT_DEPLOY",
 	"CMD_EXCHANGE_FOB_EVENT_POINT",
 	"CMD_EXCHANGE_LEAGUE_POINT",
-	"CMD_EXCHANGE_LEAGUE_POINT2",
 	"CMD_EXTEND_PLATFORM",
 	"CMD_GET_CAMPAIGN_DIALOG_LIST",
 	"CMD_GET_COMBAT_DEPLOY_LIST",
@@ -85,9 +94,6 @@ not_implemented = [
 	"CMD_GET_FOB_EVENT_DETAIL",
 	"CMD_GET_FOB_EVENT_LIST",
 	"CMD_GET_FOB_EVENT_POINT_EXCHANGE_PARAMS",
-	"CMD_GET_FOB_PARAM",
-	"CMD_GET_FOB_REWARD_LIST",
-	"CMD_GET_FOB_TARGET_DETAIL",
 	"CMD_GET_MBCOIN_REMAINDER",
 	"CMD_GET_NEXT_MAINTENANCE",
 	"CMD_GET_ONLINE_DEVELOPMENT_PROGRESS",
@@ -98,7 +104,6 @@ not_implemented = [
 	"CMD_GET_PURCHASABLE_AREA_LIST",
 	"CMD_GET_PURCHASE_HISTORY",
 	"CMD_GET_PURCHASE_HISTORY_NUM",
-	"CMD_GET_RANKING",
 	"CMD_GET_RENTAL_LOADOUT_LIST",
 	"CMD_GET_RESOURCE_PARAM",
 	"CMD_GET_SECURITY_INFO",
@@ -112,7 +117,6 @@ not_implemented = [
 	"CMD_GET_WORMHOLE_LIST",
 	"CMD_NOTICE_SNEAK_MOTHER_BASE",
 	"CMD_OPEN_STEAM_SHOP",
-	"CMD_OPEN_WORMHOLE",
 	"CMD_PURCHASE_FIRST_FOB",
 	"CMD_PURCHASE_FOB",
 	"CMD_PURCHASE_NUCLEAR_COMPLETION",
@@ -131,14 +135,10 @@ not_implemented = [
 	"CMD_SALE_RESOURCE",
 	"CMD_SEND_DEPLOY_INJURE",
 	"CMD_SEND_HEARTBEAT",
-	"CMD_SEND_MISSION_RESULT",
 	"CMD_SEND_NUCLEAR",
-	"CMD_SEND_ONLINE_CHALLENGE_TASK_STATUS",
-	"CMD_SEND_SNEAK_RESULT",
 	"CMD_SEND_SUSPICION_PLAY_DATA",
 	"CMD_SEND_TROOPS",
 	"CMD_SET_SECURITY_CHALLENGE",
-	"CMD_SNEAK_MOTHER_BASE",
 	"CMD_SPEND_SERVER_WALLET",
 	"CMD_START_CONSUME_TRANSACTION",
 	"CMD_SYNC_EMBLEM",
@@ -146,8 +146,7 @@ not_implemented = [
 	"CMD_SYNC_RESET",
 	"CMD_SYNC_SOLDIER_DIFF",
 	"CMD_USE_PF_ITEM",
-	"CMD_USE_SHORT_PF_ITEM",
-
+	"CMD_USE_SHORT_PF_ITEM"
 ]
 
 
@@ -696,37 +695,449 @@ commlist = [
 
 	{
 		"CMD_SYNC_SOLDIER_BIN": {
-		'compress': False,
-		'data': {
-			'flag': 'SYNC',
-			'force_sync': 0,
-			'msgid': 'CMD_SYNC_SOLDIER_BIN',
-			'rqid': 0,
-			'section': {
-				'base': 0,			# current level of corresponding section
-				'combat': 0,
-				'develop': 0,
-				'medical': 0,
-				'security': 0,
-				'spy': 0,
-				'suport': 0
-			},
-			'section_soldier': {
-				'base': 0,			# amount of soldiers in unit
-				'combat': 0,
-				'develop': 0,
-				'medical': 0,
-				'security': 0,
-				'spy': 0,
-				'suport': 0
+			'compress': False,
+			'data': {
+				'flag': 'SYNC',
+				'force_sync': 0,
+				'msgid': 'CMD_SYNC_SOLDIER_BIN',
+				'rqid': 0,
+				'section': {
+					'base': -1,			# current level of corresponding section
+					'combat': -1,
+					'develop': -1,
+					'medical': -1,
+					'security': -1,
+					'spy': -1,
+					'suport': -1
 				},
-			'soldier_num': 0, 		# soldiers total
-			'soldier_param': -1,	# base64-encoded binary soldier data
-			'version': 2712
-		},
-		'original_size': 0,
-		'session_crypto': True,
-		'session_key': -1
+				'section_soldier': {
+					'base': -1,			# amount of soldiers in unit
+					'combat': -1,
+					'develop': -1,
+					'medical': -1,
+					'security': -1,
+					'spy': -1,
+					'suport': -1
+					},
+				'soldier_num': -1, 		# soldiers total
+				'soldier_param': -1,	# base64-encoded binary soldier data
+				'version': 2712
+			},
+			'original_size': 0,
+			'session_crypto': True,
+			'session_key': -1
+		}
+	},
+
+	{
+		"CMD_SEND_MISSION_RESULT": {
+		# important note - this was sent twice with two mission_id: 10036 and 30010, other values were the same
+		# records are also sent after fob missions
+			"compress": False,
+			"data": {
+				"mission_id": 10036,
+				"msgid": "CMD_SEND_MISSION_RESULT",
+				"rqid": 0,
+				"send_record": {
+					"battle_gear_move": 0,
+					"cbox": [
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+					],
+					"crack_climb": 1,
+					"crawl_move": -1,		# time in game ticks? distance? mine was about 180,000,000
+					"espionage_radio": 0,
+					"garbage_box": 0,
+					"horse_move": -1,		# see crawl_move
+					"optional_Radio": 0,
+					"squat_move": -1,		# see crawl_move
+					"stand_move": -1,		# see crawl_move
+					"suit": [
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+					],
+					"toilet": 0,
+					"vehicle_move": -1,			# see crawl_move
+					"walker_gear_move": -1		# see crawl_move
+				}
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+
+	},
+
+	{
+		"CMD_GET_DAILY_REWARD": {
+			"compress": False,
+			"data": {
+				"msgid": "CMD_GET_DAILY_REWARD",
+				"rqid": 0
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_GET_FOB_REWARD_LIST": {
+			"compress": False,
+			"data": {
+				"high_rank": -1,	# no idea what is that number is, mine was ~1000
+				"msgid": "CMD_GET_FOB_REWARD_LIST",
+				"rqid": 0,
+				"version": 1099
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_GET_PLAYER_PLATFORM_LIST": {
+			"compress": False,
+			"data": {
+				"msgid": "CMD_GET_PLAYER_PLATFORM_LIST",
+				"rqid": 0
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_SEND_ONLINE_CHALLENGE_TASK_STATUS": {
+		# I think it was when I did one of the challenges during the mission
+			"compress": False,
+			"data": {
+				"array_size": 8,
+				"msgid": "CMD_SEND_ONLINE_CHALLENGE_TASK_STATUS",
+				"rqid": 0,
+				"status_list": [
+				# completed challenge is not 0 and probably equal to position in array
+					0, 1, 0, 0, 0, 0, 0, 0
+				],
+				"version": -1		# date when challenges were updated, ie 20170228
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_GET_FOB_TARGET_DETAIL": {
+			"compress": False, 
+			"data": {
+				"high_rank": -1,		# no idea what is that number is, mine was ~1000
+				"is_event": 0,
+				"is_plus": 1, 
+				"is_sneak": 1, 
+				"mode": "ACTUAL", 
+				"mother_base_id": -1, 	# id of target fob
+				"msgid": "CMD_GET_FOB_TARGET_DETAIL", 
+				"rqid": 0
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_SNEAK_MOTHER_BASE": {
+			"compress": False,
+			"data": {
+				"fob_index": 0,
+				"is_event": 0,
+				"is_plus": 1,
+				"is_security_challenge": 0,
+				"is_sneak": 1,
+				"mode": "ACTUAL",
+				"mother_base_id": -1,	# id of the fob you are invading
+				"msgid": "CMD_SNEAK_MOTHER_BASE",
+				"platform": 0,
+				"player_id": 0,
+				"rqid": 0,
+				"wormhole_player_id": 0,
+				"xnkey": "AAAAAAAAAAAAAAAAAAAAAA==",
+				"xnkid": "AAAAAAAAAAA="
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+
+	},
+
+	{
+		"CMD_GET_FOB_PARAM": {
+			"compress": False,
+			"data": {
+				"msgid": "CMD_GET_FOB_PARAM",
+				"rqid": 0
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+
+	},
+
+	{
+		"CMD_CHECK_SERVER_ITEM_CORRECT": {
+			"compress": False,
+			"data": {
+				"item_list": [	# list of item ids, take values from TppEquip.*
+					-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+				],
+				"item_list_num": 11,
+				"msgid": "CMD_CHECK_SERVER_ITEM_CORRECT",
+				"rqid": 0
+			},
+			"original_size": 0,
+			"session_crypto": True,
+			"session_key": -1
+		}
+
+	},
+
+	{
+		"CMD_ACTIVE_SNEAK_MOTHER_BASE": {
+		# I think it was sent when I alerted the fob
+			"compress": False, 
+			"data": {
+				"mother_base_id": -1, 		# id of the fob you are invading
+				"msgid": "CMD_ACTIVE_SNEAK_MOTHER_BASE", 
+				"rqid": 0
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_OPEN_WORMHOLE": {
+			"compress": False, 
+			"data": {
+				"flag": "BLACK", # ?
+				"is_open": 1, 
+				"msgid": "CMD_OPEN_WORMHOLE", 
+				"player_id": -1, 			# owner of invaded fob
+				"retaliate_score": -1,  	# I think score is calculated somewhere in o50050_sequence.lua (or whatever it's name is)
+				"rqid": 0, 
+				"to_player_id": -1			# your id
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_SEND_SNEAK_RESULT": {
+		# command after finishing fob mission
+		    "compress": False,
+		    "data": {
+		        "capture_nuclear": 0,
+		        "capture_placement": {
+		            "emplacement_gun_east": 0,
+		            "emplacement_gun_west": 0,
+		            "gatling_gun": 0,
+		            "gatling_gun_east": 0,
+		            "gatling_gun_west": 0,
+		            "mortar_normal": 0
+		        },
+		        "capture_player_soldier_num": 0,
+		        "capture_resource": {
+		            "biotic_resource": 0,
+		            "common_metal": 0,
+		            "fuel_resource": 0,
+		            "minor_metal": 0,
+		            "precious_metal": 0
+		        },
+		        "capture_soldier_count": [
+		            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		            # amount of soldiers for each rank, from E to S++
+		        ],
+		        "capture_soldier_id": [
+		            {
+		                "param": [
+		                    -1,	# some soldier params, 2 ints per soldier
+		                    -1
+		                ]
+		            },
+		            {
+		                "param": [
+		                    -1,
+		                    -1
+		                ]
+		            } # etc
+		        ],
+		        "capture_soldier_num": -1,			# amount of captured soldiers
+		        "capture_support_soldier_num": 0,
+		        "cleared_plant_count": -1,			# amount of cleared plants, you get a notification after clearing one
+		        "count_of_neutralize_intruder": 0,
+		        "count_of_neutralized_by_intruder": 0,
+		        "damage_point": -1,				# it can be damage taken or damage given. I didn't use lethal weapons and yet it was ~170000
+		        "destroy_placement": {
+		            "emplacement_gun_east": 0,
+		            "emplacement_gun_west": 0,
+		            "gatling_gun": 0,
+		            "gatling_gun_east": 0,
+		            "gatling_gun_west": 0,
+		            "mortar_normal": 0
+		        },
+		        "event": {
+		            "attacker_info": {
+		                "npid": {
+		                    "handler": {
+		                        "data": "",
+		                        "term": 0
+		                    }
+		                },
+		                "player_id": 0,
+		                "player_name": "NotImplement",
+		                "ugc": 0,
+		                "xuid": 0
+		            },
+		            "attacker_league_grade": 0,
+		            "attacker_sneak_grade": 0,
+		            "capture_nuclear": 0,
+		            "capture_resource": {
+		                "biotic_resource": 0,
+		                "common_metal": 0,
+		                "fuel_resource": 0,
+		                "minor_metal": 0,
+		                "precious_metal": 0
+		            },
+		            "cluster": 0,
+		            "data": "",		# mysterious base64-encoded data, a lot of data, most likely your movement and action history
+		            "gmp": 0,
+		            "is_win": 0,
+		            "layout_code": -1,	# ?
+		            "position_x": 0,
+		            "position_z": 0,
+		            "regist_date": 0,
+		            "rotate_y": 0,
+		            "size": -1		# size of what?
+		        },
+		        "event_point": 0,
+		        "event_version": 2,
+		        "high_rank": -1,	# no idea what is that number is, mine was ~1000
+		        "injure_soldier_num": 0,
+		        "injure_support_soldier_num": 0,
+		        "is_event": 0,
+		        "is_goal": 1,		# did you reach the door
+		        "is_perfect_stealth": 0,
+		        "is_plus": 1,		# always 1 because steam has no plus
+		        "is_sneak": 1,		# alert was raised, but sneak is still 1 (???)
+		        "is_supporter": 0,
+		        "kill_soldier_num": 0,
+		        "kill_support_soldier_num": 0,
+		        "mission_task_complete_bits": -1,	# name speaks for itself, no idea how is it calculated. Was <10 for real fob, >100 for fob event
+		        "mode": "ACTUAL",
+		        "mother_base_id": -1,	# id of attacked fob, huge number for real fob, <10 for fob event 
+		        "msgid": "CMD_SEND_SNEAK_RESULT",
+		        "open_wormhole": 1,
+		        "recover_resource": {
+		            "biotic_resource": 0,
+		            "common_metal": 0,
+		            "fuel_resource": 0,
+		            "minor_metal": 0,
+		            "precious_metal": 0
+		        },
+		        "result_type": 0,
+		        "retaliate_point": -1,		# I think score is calculated somewhere in o50050_sequence.lua (or whatever it's name is), same value as retaliate_score
+		        "retaliate_wormhole": 0,
+		        "rqid": 0,
+		        "sneak_point": -1,		# esp points
+		        "sneak_result": "WIN",
+		        "version": 1
+		    },
+		    "original_size": 0,
+		    "session_crypto": True,
+		    "session_key": -1
+		}
+	},
+
+	{
+		"CMD_GET_RANKING": {
+		# get fob ranking
+			"compress": False, 
+			"data": {
+				"event_id": 0, 		# corresponding event id, 0 for real fobs, number for events
+				"get_type": "BEST", # or AROUND for scores around you
+				"index": 0, 
+				"is_new": 0, 
+				"msgid": "CMD_GET_RANKING", 
+				"num": 1, 			# 1 is for best, 16 for around
+				"rqid": 0, 
+				"type": "SNEAK"		# SNEAK_EVENT for event
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_EXCHANGE_LEAGUE_POINT2": {
+			"compress": False, 
+			"data": {
+			# unknown values, it was an exchange for 5 S dev-type soldiers
+				"common_value": 8, 
+				"is_event": 1, 
+				"msgid": "CMD_EXCHANGE_LEAGUE_POINT2", 
+				"num_to_exchange": 1, 
+				"rqid": 0, 
+				"type": 1, 
+				"unique_id": 2
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_ADD_FOLLOW": {
+		# provide FOB support to someone 
+			"compress": False, 
+			"data": {
+				"msgid": "CMD_ADD_FOLLOW", 
+				"np_id": {
+					"handler": {
+						"data": "", 
+						"term": 0
+					}
+				}, 
+				"player_id": -1, 	# player id to support
+				"rqid": 0, 
+				"steam_id": 0, 
+				"xu_id": 0
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_DELETE_FOLLOW": {
+		# discontinue FOB support
+			"compress": False, 
+			"data": {
+				"msgid": "CMD_DELETE_FOLLOW", 
+				"player_id": -1, 	# player id to unfollow
+				"rqid": 0
+			}, 
+			"original_size": 0, 
+			"session_crypto": True, 
+			"session_key": -1
 		}
 	}
 
