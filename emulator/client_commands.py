@@ -731,11 +731,13 @@ commlist = [
 
 	{
 		"CMD_SEND_MISSION_RESULT": {
-		# important note - this was sent twice with two mission_id: 10036 and 30010, other values were the same
+		# important note - this was sent twice after completing mission 10036 
+		# first request mission_id: 10036 
+		# second: and 30010, other values were the same
 		# records are also sent after fob missions
 			"compress": False,
 			"data": {
-				"mission_id": 10036,
+				"mission_id": -1,
 				"msgid": "CMD_SEND_MISSION_RESULT",
 				"rqid": 0,
 				"send_record": {
