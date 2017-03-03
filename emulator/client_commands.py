@@ -55,7 +55,8 @@ urls = {
 		"CMD_GET_RANKING",
 		"CMD_EXCHANGE_LEAGUE_POINT2",
 		"CMD_ADD_FOLLOW",
-		"CMD_DELETE_FOLLOW"
+		"CMD_DELETE_FOLLOW",
+		"CMD_SYNC_EMBLEM"
 	]
 }
 
@@ -86,7 +87,6 @@ not_implemented = [
 	"CMD_GET_CAMPAIGN_DIALOG_LIST",
 	"CMD_GET_COMBAT_DEPLOY_LIST",
 	"CMD_GET_CONTRIBUTE_PLAYER_LIST",
-	"CMD_GET_DAILY_REWARD",
 	"CMD_GET_DEVELOPMENT_PROGRESS",
 	"CMD_GET_ENTITLEMENT_ID_LIST",
 	"CMD_GET_FOB_DAMAGE",
@@ -141,7 +141,6 @@ not_implemented = [
 	"CMD_SET_SECURITY_CHALLENGE",
 	"CMD_SPEND_SERVER_WALLET",
 	"CMD_START_CONSUME_TRANSACTION",
-	"CMD_SYNC_EMBLEM",
 	"CMD_SYNC_MOTHER_BASE",
 	"CMD_SYNC_RESET",
 	"CMD_SYNC_SOLDIER_DIFF",
@@ -1141,8 +1140,58 @@ commlist = [
 			"session_crypto": True, 
 			"session_key": -1
 		}
-	}
+	},
 
+	"CMD_SYNC_EMBLEM": {
+		"compress": False,
+		"data": {
+			"emblem": {
+				"parts": [
+					{
+						"base_color": -1,
+						"frame_color": -1,
+						"position_x": -1,			# from -100 to 100?
+						"position_y": -1,
+						"rotate": 0,
+						"scale": -1,
+						"texture_tag": -1
+					},
+					{
+						"base_color": -1,
+						"frame_color": -1,
+						"position_x": -1,
+						"position_y": -1,
+						"rotate": 0,
+						"scale": -1,
+						"texture_tag": -1
+					},
+					{	
+						"base_color": -1,
+						"frame_color": -1,
+						"position_x": -1,
+						"position_y": -1,
+						"rotate": 0,
+						"scale": -1,
+						"texture_tag": -1
+					},
+					{
+						"base_color": -1,
+						"frame_color": -1,
+						"position_x": -1,
+						"position_y": -1,
+						"rotate": 0,
+						"scale": -1,
+						"texture_tag": -1
+					}
+				]
+			},
+			"msgid": "CMD_SYNC_EMBLEM",
+			"rqid": 0
+		},
+		"original_size": 0,
+		"session_crypto": True,
+		"session_key": -1
+	}
 ]
 
 for i in commlist:
