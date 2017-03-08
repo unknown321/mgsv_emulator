@@ -86,6 +86,7 @@ class Decoder(object):
 		except Exception as e:
 			raise e
 
+
 		if not self.__session_blowfish__:
 			# there was no crypto_key set during class initialization
 			self.__get_crypto_key__(data_json)

@@ -44,7 +44,7 @@ class Encoder(object):
 
 			x_text = struct.pack(ENCODE_PACK,x)
 			y_text = struct.pack(ENCODE_PACK,y)
-			
+
 			full_text += x_text + y_text
 			offset = offset+8
 		return full_text
@@ -53,7 +53,6 @@ class Encoder(object):
 		if len(text)%8!=0:
 			x = bytes([8-len(text)%8])*(8-len(text)%8)
 			text = text + x.decode()
-			# print("---",text)
 		return text
 
 	def __compress_data__(self, data):
@@ -61,28 +60,28 @@ class Encoder(object):
 		text = text.replace(' ','')
 		return text
 
-	def encode(self, _data):
-		if type(_data) != dict:
+	def encode(self, _command):
+		if type(_command) != dict:
+                    #honestly, we should break right here since no code is executing in that case
 			warnings.warn('You are using plain text, parameters might be not in the right order!', Warning, stacklevel=2)
 
 
 		# encrypt everything inside command
-		if (type(_data) == dict) and ('data' in _data):
-			# 
-			_data['original_size'] = len( self.__compress_data__(_data['data']) )
-			# _data['data'] =  json.dumps(_data['data'], sort_keys=True)
-			_data['data'] = self.__compress_data__(_data['data'])
-			
+		if (type(_command) == dict) and ('data' in _command):
+                        # remove spaces, replace quotes, like C does + calculate new size
+			_command['data'] = self.__compress_data__(_command['data'])
+			_command['original_size'] = len(_command['data'])
 
-			if _data['session_crypto']:
-				_data['data'] = self.__add_padding__(_data['data'])
-				
-				if _data['compress']:
-					_data['data'] = zlib.compress(_data['data'])
-				_data['data'] = base64.encodestring(self.__encipher__(self.__session_blowfish__, _data['data'])).decode()
-				_data['data'] = _data['data'].replace('\n','\r\n').rstrip('\r\n')
-		# print("---",_data['data'])
-		text = json.dumps(_data,sort_keys=True).replace(" ",'')
+
+			if _command['compress']:
+				_command['data'] = base64.encodestring(zlib.compress(_command['data'].encode())).decode()
+			_command['data'] = _command['data'].replace('\n','\r\n')
+
+			if _command['session_crypto']:
+				_command['data'] = self.__add_padding__(_command['data'])
+				_command['data'] = base64.encodestring(self.__encipher__(self.__session_blowfish__, _command['data'])).decode()
+
+		text = json.dumps(_command,sort_keys=True).replace(" ",'')
 		text = self.__add_padding__(text)
 		text = base64.encodestring(self.__encipher__(self.__static_blowfish__, text))
 		text = text.decode().replace('\n','\r\n').rstrip('\r\n')
