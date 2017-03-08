@@ -64,7 +64,7 @@ class Decoder(object):
 
 			x_text = struct.pack(DECODE_PACK,x)
 			y_text = struct.pack(DECODE_PACK,y)
-			
+
 			full_text += x_text + y_text
 			offset = offset+8
 		return full_text
@@ -105,7 +105,7 @@ class Decoder(object):
 		else:
 			# no encryption, used in CMD_GET_URLLIST and others before getting session key
 			if data_json['compress']:
-				data_json['data'] = zlib.decompress(base64.decodestring(data_json['data'].encode()))			
+				data_json['data'] = zlib.decompress(base64.decodestring(data_json['data'].encode()))
 
 		if type(data_json['data']) == bytes:
 			data_json['data'] = data_json['data'].decode()
