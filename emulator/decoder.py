@@ -79,20 +79,17 @@ class Decoder(object):
 			raise e
 		else:
 			data_decoded = self.__decipher__(self.__static_blowfish__, data_encoded)
-
 		try:
 			# json conversions can be wonky
 			data_json = self.__get_json__(data_decoded.decode())
 		except Exception as e:
 			raise e
 
-
 		if not self.__session_blowfish__:
 			# there was no crypto_key set during class initialization
 			self.__get_crypto_key__(data_json)
 			if self.__crypto_key__:
 				self.__init_session_blowfish__()
-
 		if data_json['session_crypto']:
 			if self.__session_blowfish__:
 				# COMPOUND encryption with blowfish
