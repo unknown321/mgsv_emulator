@@ -38,8 +38,8 @@ class Encoder(object):
 		full_text = bytes()
 		while offset!= len(data):
 			chunk = data[offset:offset+8]
-			x = struct.unpack('>l',chunk[0:4].encode())[0]
-			y = struct.unpack('>l', chunk[4:8].encode())[0]
+			x = struct.unpack(ENCODE_PACK,chunk[0:4].encode())[0]
+			y = struct.unpack(ENCODE_PACK, chunk[4:8].encode())[0]
 			x,y = blow.blowfish_encipher(x, y)
 
 			x_text = struct.pack(ENCODE_PACK,x)
@@ -52,7 +52,6 @@ class Encoder(object):
 	def __add_padding__(self, text):
 		if len(text)%8!=0:
 			x = bytes([8-len(text)%8])*(8-len(text)%8)
-			print('adding padding {}'.format(len(x)))
 			text = text + x.decode()
 		return text
 
@@ -74,12 +73,21 @@ class Encoder(object):
 			_command['original_size'] = len(_command['data'])
 
 
-			if _command['compress']:
+			if _command['compress'] and not _command['session_crypto']:
 				_command['data'] = base64.encodestring(zlib.compress(_command['data'].encode())).decode()
 				_command['data'] = _command['data'].replace('\n','\r\n')
 
 			if _command['session_crypto']:
-				_command['data'] = self.__add_padding__(_command['data'])
+				if _command['compress']:
+				    #problem is here
+#add_padding
+#zlib_compress
+#encipher
+#base64
+					_command['data'] = self.__add_padding__(_command['data'])
+					_command['data'] = zlib.compress(_command['data'].encode())
+				else:
+					_command['data'] = self.__add_padding__(_command['data'])
 				_command['data'] = base64.encodestring(self.__encipher__(self.__session_blowfish__, _command['data'])).decode()
 				_command['data'] = _command['data'].replace('\n','\r\n').rstrip('\r\n')
 

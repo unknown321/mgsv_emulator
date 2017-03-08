@@ -90,6 +90,7 @@ class Decoder(object):
 			self.__get_crypto_key__(data_json)
 			if self.__crypto_key__:
 				self.__init_session_blowfish__()
+
 		if data_json['session_crypto']:
 			if self.__session_blowfish__:
 				# COMPOUND encryption with blowfish
@@ -97,6 +98,7 @@ class Decoder(object):
 				data_json['data'] = self.__decipher__(self.__session_blowfish__, embedded)
 				if data_json['compress']:
 					data_json['data'] = zlib.decompress(data_json['data'])
+					print("After decompressing: {}".format(data_json['data']))
 			else:
 				# encryption is used, but we have no session key
 				raise ValueError('Message is encoded, but no crypto_key was provided')

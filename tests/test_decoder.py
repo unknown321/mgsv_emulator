@@ -95,8 +95,3 @@ c4M2QoF5juLcqskL1iLDYQlLVsTH5VCgC7mK204ygBrK6BopI6RZN6pX+6R\
 		r['data']['record']['score'] = 0
 		r['data']['kill_count'] = 0
 		self.assertTrue(result==r)
-
-
-
-
-
