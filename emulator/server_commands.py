@@ -5,58 +5,58 @@ urls = {
 	"/tppstm/gate":[
 		"CMD_GET_INFORMATIONLIST",
 		"CMD_GET_SVRLIST",
-		"CMD_GET_SVRTIME",
-		"CMD_GET_URLLIST"
+#		"CMD_GET_SVRTIME",
+#		"CMD_GET_URLLIST"
 		],
 
 	"/tppstm/main":[
-		"CMD_ABORT_MOTHER_BASE",
-		"CMD_AUTH_STEAMTICKET",
-		"CMD_CHECK_SHORT_PFLEAGUE_ENTERABLE",
-		"CMD_ENTER_SHORT_PFLEAGUE",
-		"CMD_GET_ABOLITION_COUNT",
-		"CMD_GET_CHALLENGE_TASK_REWARDS",
-		"CMD_GET_CHALLENGE_TASK_TARGET_VALUES",
-		"CMD_GET_COMBAT_DEPLOY_RESULT",
-		"CMD_GET_FOB_NOTICE",
-		"CMD_GET_FOB_STATUS",
-		"CMD_GET_FOB_TARGET_LIST",
-		"CMD_GET_LEAGUE_RESULT",
-		"CMD_GET_LOGIN_PARAM",
-		"CMD_GET_ONLINE_PRISON_LIST",
-		"CMD_GET_OWN_FOB_LIST",
-		"CMD_GET_PF_POINT_EXCHANGE_PARAMS",
-		"CMD_GET_PLAYERLIST",
-		"CMD_GET_PREVIOUS_SHORT_PFLEAGUE_RESULT",
-		"CMD_GET_SERVER_ITEM_LIST",
-		"CMD_GET_SHORT_PFLEAGUE_RESULT",
-		"CMD_MINING_RESOURCE",
-		"CMD_REQAUTH_HTTPS",
-		"CMD_SEND_BOOT",
-		"CMD_SEND_IPANDPORT",
-		"CMD_SET_CURRENTPLAYER",
-		"CMD_SYNC_LOADOUT",
-		"CMD_SYNC_RESOURCE",
-		"CMD_SYNC_SOLDIER_BIN",
-		"CMD_UPDATE_SESSION",
-		# "CMD_SYNC_MOTHER_BASE"  # not implemented, too big
-		"CMD_SEND_MISSION_RESULT",
-		"CMD_GET_DAILY_REWARD",
-		"CMD_GET_FOB_REWARD_LIST",
-		"CMD_GET_PLAYER_PLATFORM_LIST",
-		"CMD_SEND_ONLINE_CHALLENGE_TASK_STATUS",
-		"CMD_GET_FOB_TARGET_DETAIL",
-		"CMD_SNEAK_MOTHER_BASE",
-		"CMD_GET_FOB_PARAM",
-		"CMD_CHECK_SERVER_ITEM_CORRECT",
-		"CMD_ACTIVE_SNEAK_MOTHER_BASE",
-		"CMD_OPEN_WORMHOLE",
-		"CMD_SEND_SNEAK_RESULT",
-		"CMD_GET_RANKING",
-		"CMD_EXCHANGE_LEAGUE_POINT2",
-		"CMD_ADD_FOLLOW",
-		"CMD_DELETE_FOLLOW",
-		"CMD_SYNC_EMBLEM"
+#		"CMD_ABORT_MOTHER_BASE",
+#		"CMD_AUTH_STEAMTICKET",
+#		"CMD_CHECK_SHORT_PFLEAGUE_ENTERABLE",
+#		"CMD_ENTER_SHORT_PFLEAGUE",
+#		"CMD_GET_ABOLITION_COUNT",
+#		"CMD_GET_CHALLENGE_TASK_REWARDS",
+#		"CMD_GET_CHALLENGE_TASK_TARGET_VALUES",
+#		"CMD_GET_COMBAT_DEPLOY_RESULT",
+#		"CMD_GET_FOB_NOTICE",
+#		"CMD_GET_FOB_STATUS",
+#		"CMD_GET_FOB_TARGET_LIST",
+#		"CMD_GET_LEAGUE_RESULT",
+#		"CMD_GET_LOGIN_PARAM",
+#		"CMD_GET_ONLINE_PRISON_LIST",
+#		"CMD_GET_OWN_FOB_LIST",
+#		"CMD_GET_PF_POINT_EXCHANGE_PARAMS",
+#		"CMD_GET_PLAYERLIST",
+#		"CMD_GET_PREVIOUS_SHORT_PFLEAGUE_RESULT",
+#		"CMD_GET_SERVER_ITEM_LIST",
+#		"CMD_GET_SHORT_PFLEAGUE_RESULT",
+#		"CMD_MINING_RESOURCE",
+#		"CMD_REQAUTH_HTTPS",
+#		"CMD_SEND_BOOT",
+#		"CMD_SEND_IPANDPORT",
+#		"CMD_SET_CURRENTPLAYER",
+#		"CMD_SYNC_LOADOUT",
+#		"CMD_SYNC_RESOURCE",
+#		"CMD_SYNC_SOLDIER_BIN",
+#		"CMD_UPDATE_SESSION",
+#		# "CMD_SYNC_MOTHER_BASE"  # not implemented, too big
+#		"CMD_SEND_MISSION_RESULT",
+#		"CMD_GET_DAILY_REWARD",
+#		"CMD_GET_FOB_REWARD_LIST",
+#		"CMD_GET_PLAYER_PLATFORM_LIST",
+#		"CMD_SEND_ONLINE_CHALLENGE_TASK_STATUS",
+#		"CMD_GET_FOB_TARGET_DETAIL",
+#		"CMD_SNEAK_MOTHER_BASE",
+#		"CMD_GET_FOB_PARAM",
+#		"CMD_CHECK_SERVER_ITEM_CORRECT",
+#		"CMD_ACTIVE_SNEAK_MOTHER_BASE",
+#		"CMD_OPEN_WORMHOLE",
+#		"CMD_SEND_SNEAK_RESULT",
+#		"CMD_GET_RANKING",
+#		"CMD_EXCHANGE_LEAGUE_POINT2",
+#		"CMD_ADD_FOLLOW",
+#		"CMD_DELETE_FOLLOW",
+#		"CMD_SYNC_EMBLEM"
 	]
 }
 
@@ -162,27 +162,27 @@ commlist = [
 				"url_list":[
 					{
 						"type":"GATE",
-						"url":"https://mgstpp-game.konamionline.com/tppstm/gate",
+						"url":settings.CUSTOM_SERVER_URL + "/tppstm/gate",
 						"version":9
 					},
 					{
 						"type":"WEB",
-						"url":"https://mgstpp-game.konamionline.com/tppstm/main",
+						"url":settings.CUSTOM_SERVER_URL + "/tppstm/main",
 						"version":9
 					},
 					{
 						"type":"EULA",
-						"url":"http://mgstpp-game.konamionline.com/tppstmweb/eula/eula.var",
+						"url":settings.CUSTOM_SERVER_URL + "/tppstmweb/eula/eula.var",
 						"version":3
 					},
 					{
 						"type":"HEATMAP",
-						"url":"http://mgstpp-app.konamionline.com/tppstmweb/heatmap",
+						"url":settings.CUSTOM_SERVER_URL + "/tppstmweb/heatmap",
 						"version":0
 					},
 					{
 						"type":"DEVICE",
-						"url":"https://mgstpp-app.konamionline.com/tppstm/main",
+						"url":settings.CUSTOM_SERVER_URL + "/tppstm/main",
 						"version":0
 					}
 				],
@@ -200,13 +200,20 @@ commlist = [
 		"CMD_GET_SVRLIST" : {
 			'compress': False,
 			'data': {
-				'lang': 'ANY', 
+				'crypto_type': 'COMMON',
+				'flowid': None,
 				'msgid': 'CMD_GET_SVRLIST',
-				'rqid': 0
-			},
-			'original_size': 0,
-			'session_crypto': False,
-			'session_key': ''
+				'result': 'NOERR',
+				'rqid': 0,
+				'server_num': 0,
+				'svrlist': [],
+				'xuid': None
+				},
+				'original_size': 0,
+				'session_crypto': False,
+				'session_key': None
+			}
+
 		}
 	},
 
