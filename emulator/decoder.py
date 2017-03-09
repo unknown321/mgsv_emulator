@@ -39,8 +39,12 @@ class Decoder(object):
 						self.__crypto_key__ = crypto_key
 		return crypto_key
 
-	def __init_session_blowfish__(self):
+	def __init_session_blowfish__(self, crypto_key=None):
 		self.__session_blowfish__ = blowfish()
+		if crypto_key:
+			if isinstance(crypto_key, str):
+				crypto_key = bytearray(base64.decodestring(crypto_key.encode()))
+			self.__crypto_key__ = crypto_key
 		self.__session_blowfish__.initialize(self.__crypto_key__)
 
 	def __get_json__(self, text):

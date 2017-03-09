@@ -30,6 +30,8 @@ class Encoder(object):
 	def __init_session_blowfish__(self, crypto_key=None):
 		self.__session_blowfish__ = blowfish()
 		if crypto_key:
+			if isinstance(crypto_key, str):
+				crypto_key = bytearray(base64.decodestring(crypto_key.encode()))
 			self.__crypto_key__ = crypto_key
 		self.__session_blowfish__.initialize(self.__crypto_key__)
 
@@ -58,7 +60,7 @@ class Encoder(object):
 		if len(text)%8!=0:
 			x = bytes([8-len(text)%8])*(8-len(text)%8)
 			if isinstance(text,str):
-				text = text + x.decode()
+				text = text.encode() + x
 			else:
 				text = text + x
 		return text
@@ -97,7 +99,7 @@ class Encoder(object):
 				_command['data'] = _command['data'].replace('\n','\r\n').rstrip('\r\n')
 
 		text = json.dumps(_command,sort_keys=True).replace(" ",'')
-		text = self.__add_padding__(text)
-		text = base64.encodestring(self.__encipher__(self.__static_blowfish__, text))
+		text = self.__add_padding__(text.encode())
+		text = base64.encodestring(self.__encipher__(self.__static_blowfish__, bytearray(text)))
 		text = text.decode().replace('\n','\r\n').rstrip('\r\n')
 		return text
