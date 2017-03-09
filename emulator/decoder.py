@@ -98,7 +98,6 @@ class Decoder(object):
 				data_json['data'] = self.__decipher__(self.__session_blowfish__, embedded)
 				if data_json['compress']:
 					data_json['data'] = zlib.decompress(data_json['data'])
-					print("After decompressing: {}".format(data_json['data']))
 			else:
 				# encryption is used, but we have no session key
 				raise ValueError('Message is encoded, but no crypto_key was provided')
@@ -122,8 +121,3 @@ class Decoder(object):
 				data_json['data'] = j
 
 		return data_json
-
-# TODO: move to tests
-# d = Decoder()
-# text = "YnHdLj/1b4SBvSa1/0bYhcd4UAB70VUxUp9R+E7nlQqbd/CfasI2cHERrSHJdSMpyXeXDjDyVZA9ZW+a9XxS/njMyTWS86ztRmyJ6yr6RICSRqkSq/14sMwyaWtw5heV+Sz+EYH1y2pbbsdaoU5hYHVAPWVjLqPUc8dYBIG7yZXPEmu0H3/N2z6uhACqfTgyrJvd8dOR+t4ekBWWFsLFTzO4yUOlMIk4kV7NHmMm2QPwfUE8/YY05Pog0Cu6r6wGSIZJghUfd8Ko9jzdAqyHkq/07vhNMcet3RBbi7BJty7zbN01+7nuywzb3bZh3MnWjqhs3swuQUADCo4k4+0PrfmWJY5kTwNXGALVleozNL2CR0pLVHimlfKohUvBlLP6kOzrli7EIC5EBqPPUTTptMmfkE2PTm9wDf1Lk+MPib7YpYqgOsPbIjONlpiur+19VdzkXTpOJBir1mVkNGGxdgTntsNuRyLpE1VkE7ngGSnX6jNAs8vFF65LERPnvE6jnsAlzQt7YDRpzTvu0nOD4I5YAzAdBaJkaiPelF7/nmdTt5T1ic2LNbWcg37hPPar2PTXrReJtq6xwMvNY/IzZMamJefkWTTC"
-# print(d.decode(text))

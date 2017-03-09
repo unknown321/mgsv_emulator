@@ -38,8 +38,13 @@ class Encoder(object):
 		full_text = bytes()
 		while offset!= len(data):
 			chunk = data[offset:offset+8]
-			x = struct.unpack(ENCODE_PACK,chunk[0:4].encode())[0]
-			y = struct.unpack(ENCODE_PACK, chunk[4:8].encode())[0]
+			if isinstance(chunk, str):
+				x = struct.unpack(ENCODE_PACK,chunk[0:4].encode())[0]
+				y = struct.unpack(ENCODE_PACK, chunk[4:8].encode())[0]
+			else:
+				x = struct.unpack(ENCODE_PACK,chunk[0:4])[0]
+				y = struct.unpack(ENCODE_PACK, chunk[4:8])[0]
+
 			x,y = blow.blowfish_encipher(x, y)
 
 			x_text = struct.pack(ENCODE_PACK,x)
@@ -52,12 +57,17 @@ class Encoder(object):
 	def __add_padding__(self, text):
 		if len(text)%8!=0:
 			x = bytes([8-len(text)%8])*(8-len(text)%8)
-			text = text + x.decode()
+			if isinstance(text,str):
+				text = text + x.decode()
+			else:
+				text = text + x
 		return text
 
 	def __compress_data__(self, data):
 		text = json.dumps(data, sort_keys=True)
-		text = text.replace(' ','')
+		# this will also replace all stuff in VALUES, which can be a big deal
+		text = text.replace(', ',',')
+		text = text.replace(': ',':')
 		return text
 
 	def encode(self, _command):
@@ -72,20 +82,15 @@ class Encoder(object):
 			_command['data'] = self.__compress_data__(_command['data'])
 			_command['original_size'] = len(_command['data'])
 
-
 			if _command['compress'] and not _command['session_crypto']:
 				_command['data'] = base64.encodestring(zlib.compress(_command['data'].encode())).decode()
 				_command['data'] = _command['data'].replace('\n','\r\n')
 
 			if _command['session_crypto']:
 				if _command['compress']:
-				    #problem is here
-#add_padding
-#zlib_compress
-#encipher
-#base64
-					_command['data'] = self.__add_padding__(_command['data'])
 					_command['data'] = zlib.compress(_command['data'].encode())
+					# game adds redundant padding (8 bytes even if len%8=0)
+					_command['data'] = self.__add_padding__(_command['data'])
 				else:
 					_command['data'] = self.__add_padding__(_command['data'])
 				_command['data'] = base64.encodestring(self.__encipher__(self.__session_blowfish__, _command['data'])).decode()

@@ -80,5 +80,11 @@ c4M2QoF5juLcqskL1iLDYQlLVsTH5VCgC7mK204ygBrK6BopI6RZN6pX+6R\
 
 		e = encoder.Encoder(crypto_key=bytearray(base64.decodestring(settings.TESTS_MAGIC_HASH.encode())))
 		r = e.encode(command).replace('\r\n','')
-		print(r)
+		print('My result:\n{}'.format(r))
+		print('their result:\n{}'.format(result))
+#		for i,s in enumerate(difflib.ndiff(r,result)):
+#			if s[0] != ' ':
+#				print(i,repr(s))
+
+
 		self.assertTrue(r==result)

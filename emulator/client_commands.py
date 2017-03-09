@@ -2,6 +2,8 @@ from collections import OrderedDict
 from . import settings
 
 urls = {
+	"tppps3":"gate responds, but we don't have auth info (parameter names and values)",
+	"tppps4":"same",
 	"/tppstm/gate":[
 		"CMD_GET_INFORMATIONLIST",
 		"CMD_GET_SVRLIST",
