@@ -41,7 +41,7 @@ Client:
 login() will automatically parse requests and save session cryptokey (so you won't have to manually use it every time).
 Afterwards, feel free to call any command available, see https://github.com/unknown321/mgsv_nuke_watcher as an example.
 
-Server:
+# Server status:
 
 Done:
  * CMD_GET_URLLIST
