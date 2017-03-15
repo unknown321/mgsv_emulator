@@ -53,7 +53,7 @@ Done:
 
 Todo list:
 
- * Login procedure, which includes generation of crypto keys, session id, etc (CMD_AUTH_STEAMTICKET, CMD_REQAUTH_HTTPS). This will involve setting up mysql server to save user data.
+ * Login procedure, which includes generation of crypto keys, session id, etc (CMD_AUTH_STEAMTICKET, CMD_REQAUTH_HTTPS). Note: a new steam ticket is issued every time you connect to server.
  * Player list stuff (CMD_GET_PLAYERLIST, CMD_SET_PLAYERLIST)
  * Challenge task rewards (414 tasks from konami)
  * Login params (CMD_GET_LOGIN_PARAM), which includes cluster_build_costs, fob_event_task_list, online_challenge_task, server_product_params, server_texts and staff_rank_bonus_rates.
