@@ -4,7 +4,13 @@ from . import settings
 urls = {
 	"tppps3":"gate responds, but we don't have auth info (parameter names and values)",
 	"tppps4":"same",
-	"tpp360":"same",
+	"tpp360":"uses different static enc key",
+	"tppone":"uses different static enc key",
+	"mgostm":"mgo on steam!",
+	"mgo360":"xbox 360 mgo",
+	"mgoone":"xbone mgo"
+	"mgops3":"you got the idea",
+	"mgops4":"yea",
 	"/tppstm/gate":[
 		"CMD_GET_INFORMATIONLIST",
 		"CMD_GET_SVRLIST",
