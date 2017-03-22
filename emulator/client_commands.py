@@ -4,6 +4,7 @@ from . import settings
 urls = {
 	"tppps3":"gate responds, but we don't have auth info (parameter names and values)",
 	"tppps4":"same",
+	"tpp360":"same",
 	"/tppstm/gate":[
 		"CMD_GET_INFORMATIONLIST",
 		"CMD_GET_SVRLIST",
@@ -260,7 +261,8 @@ commlist = [
 				'nat': 'OPEN_INTERNET',
 				'rqid': 0,
 				'secure_device_address': 'NotImplement',
-				'xnaddr': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+				'xnaddr': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'	# a fully qualified game console address (also referred to as an XNADDR) 
+												# https://patentimages.storage.googleapis.com/pdfs/US20040009815.pdf
 			}, 
 			'original_size': 0,
 			'session_crypto': True,
