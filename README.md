@@ -95,3 +95,6 @@ Login procedure (from start to title menu):
     CMD_MINING_RESOURCE
     CMD_GET_SVRTIME
     CMD_GET_CHALLENGE_TASK_TARGET_VALUES
+
+
+completely unrelated - konami uses svn and rarely updates their webserver
