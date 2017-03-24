@@ -25,6 +25,14 @@ class Decoder(object):
 
 		self.__session_blowfish__ = None
 		self.__crypto_key__ = None
+
+
+
+#================= remove dirty hack
+		crypto_key = bytearray(base64.decodestring('AAAAAAAAAAAAAAAAAAAAAA=='.encode()))
+#================= remove dirty hack
+
+
 		if crypto_key:
 			self.__crypto_key__ = crypto_key
 			self.__init_session_blowfish__()

@@ -8,7 +8,7 @@ urls = {
 	"tppone":"uses different static enc key",
 	"mgostm":"mgo on steam!",
 	"mgo360":"xbox 360 mgo",
-	"mgoone":"xbone mgo"
+	"mgoone":"xbone mgo",
 	"mgops3":"you got the idea",
 	"mgops4":"yea",
 	"/tppstm/gate":[
