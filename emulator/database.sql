@@ -31,14 +31,13 @@ create table if not exists player_vars(
 	fob_grade int, 
 	fob_point int, 
 	fob_rank int, 
-	player_index int, 
 	is_insurance int,
 	league_grade int,
 	league_rank int,
 	name varchar(50),
 	playtime int, 
 	point int,
-	player_num int,
+	player_num int, -- always 1
 
 	primary key(id),
 	foreign key (player_id) references players(id) on delete cascade

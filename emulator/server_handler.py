@@ -23,6 +23,8 @@ class ServerHandler(object):
 			"CMD_GET_URLLIST": self.cmd_get_urllist,
 			"CMD_GET_SVRLIST": self.cmd_get_srvlist,
 			"CMD_GET_SVRTIME": self.cmd_get_srvtime,
+			"CMD_SEND_IPANDPORT": self.cmd_send_ipandport,
+			"CMD_GET_PLAYERLIST": self.cmd_get_playerlist,
 		}
 		self._db = Database()
 		self._db.connect()
@@ -59,10 +61,13 @@ class ServerHandler(object):
 		else:
 			pass
 
+	def _populate_player_default_values(self, player_id):
+		pass
 
 	def _append_session_key(self, command):
 		# session key is required for command
 		# db.get_session_key
+		# do I really need that function?
 		if self.__session_key__:
 			command['session_key'] = 'fgsfds'
 		else:
@@ -131,7 +136,8 @@ class ServerHandler(object):
 				pass
 			else:
 				self._db.player_add(data, client_ip)
-				# populate table player_values with default data
+				player_id = self._db.player_find_by_steam_id(data['account_id'])[0]
+				self._populate_player_default_values(player_id)
 
 		else:
 			logger.log_event('konami returned none?')
@@ -182,17 +188,25 @@ class ServerHandler(object):
 
 #======CMD_GET_PLAYERLIST
 	def cmd_get_playerlist(self, client_request):
-		pass
-		#player_list': [{'espionage_lose': , 
-		#'espionage_win': , 
-		#'fob_grade': , 
-		#'fob_point': , 
-		#'fob_rank': , 
-		#'index': 0, 
-		#'is_insurance': 0, 
-		#'league_grade': , 
-		#'league_rank': , 
-		#'name': '', 
-		#'playtime': 0, 
-		#'point': 0}], 
-		#'player_num': 1,
+		sql = 'select espionage_lose, espionage_win, fob_grade, fob_point,\
+			fob_rank, is_insurance, league_grade, league_rank, \
+			name, playtime, point from player_vars JOIN players on player_vars.player_id = players.id \
+			WHERE session_id = %s'
+		values = (client_request['session_key'],)
+		data = self._db.fetch_query(sql, values)[0]
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		d = command['player_list'][0]
+		d['espionage_lose'] = data[0]
+		d['espionage_win'] = data[1]
+		d['fob_grade'] = data[2]
+		d['fob_point'] = data[3]
+		d['fob_rank'] = data[4]
+		d['index'] = 0
+		d['is_insurance'] = data[5]
+		d['league_grade'] = data[6]
+		d['league_rank'] = data[7]
+		d['name'] = data[8]
+		d['playtime'] = data[9]
+		d['point'] = data[10]
+		command['data']['player_num'] =  1
+		return command
