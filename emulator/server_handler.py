@@ -2,16 +2,14 @@
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
+# how is this import possible, database is 2 levels higher
 from database import Database
 from datetime import datetime
 import time
 import copy
 from .server_commands import server_commands
+from .logger import Logger
 
-def log_event(text, event_type=0):
-	logfile = open('/var/www/mgsv_server/logs/app.log','a')
-	logfile.write('[{}] {}: {}\n'.format(datetime.now(), event_type, text))
-	logfile.close()
 
 
 class ServerHandler(object):
@@ -28,23 +26,31 @@ class ServerHandler(object):
 		}
 		self._db = Database()
 		self._db.connect()
+		# not sure if calls to logger will work without <self>
+		logger = Logger()
 
 	def _command_get(self, name):
 		return server_commands[name]
 
 	def process_message(self, client_request, client_ip, httpMsg=None):
 		msgid = client_request['data']['msgid']
-		if msgid != 'CMD_AUTH_STEAMTICKET':
-			command = self._handlers[msgid](client_request)
-		else:
+		if msgid == 'CMD_AUTH_STEAMTICKET':
 			# authenticating user, need to save ip
 			# httpMsg is encoded version of CMD_AUTH_STEAMTICKET
 			command = self._handlers[msgid](httpMsg, client_ip)
+		else:
+			# every other command, process as usual
+			if client_request['session_key']:
+				player = self._db.player_find_by_session_id(client_request['session_key'])
+				if len(player) == 1:
+					command = self._handlers[msgid](client_request)
+				else:
+					command = self.get_error()
 
 		if isinstance(command, dict):
 			if 'session_key' in command:
-				if command['session_key'] == -1:
-					self._append_session_key(command)
+				if command['session_key'] == -1 and client_request['session_key']:
+					command['session_key'] = client_request['session_key']
 		return command
 
 	def _session_exists(self, session_id):
@@ -61,6 +67,10 @@ class ServerHandler(object):
 			command['session_key'] = 'fgsfds'
 		else:
 			raise Exception('Session key is required for this command, but no key provided')
+
+	def get_error(self):
+		# TODO: find all ERR_ codes and use them
+		return 1
 
 	# BAD
 	# def _append_date(self, command):
@@ -96,6 +106,7 @@ class ServerHandler(object):
 #======CMD_GET_SVRTIME
 	def cmd_get_srvtime(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command['data']['date'] = int(time.time())
 		return command
 
 #======CMD_AUTH_STEAMTICKET
@@ -111,7 +122,7 @@ class ServerHandler(object):
 			decoder = Decoder()
 			decoded_kon_resp = decoder.decode(proxied_response)
 
-			log_event('konami resp: ' + str(decoded_kon_resp))
+			logger.log_event('konami resp: ' + str(decoded_kon_resp))
 
 			data = decoded_kon_resp['data']
 			player = self._db.player_find_by_steam_id(data['account_id'])
@@ -123,18 +134,17 @@ class ServerHandler(object):
 				# populate table player_values with default data
 
 		else:
-			log_event('konami returned none?')
+			logger.log_event('konami returned none?')
 		return decoded_kon_resp
 
 
 #======CMD_REQAUTH_HTTPS
 	def cmd_reqauth(self, client_request):
-		output = None
 		data = client_request['data']
-		log_event('looking for steam_id {} {}'.format(data['user_name'], len(data['user_name'])))
+		logger.log_event('looking for steam_id {} {}'.format(data['user_name'], len(data['user_name'])))
 		player = self._db.player_find_by_steam_id(data['user_name'])
 		if len(player) != 1:
-			log_event('looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
+			logger.log_event('looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
 		else:
 			# generate session id and crypto_key
 			session_id = self._generare_session_id()
@@ -152,3 +162,37 @@ class ServerHandler(object):
 			command['data']['user_id'] = player[0][0]
 			command['data']['smart_device_id'] = player[0][4]
 		return command
+
+#======CMD_SEND_IPANDPORT
+	def cmd_send_ipandport(self, client_request):
+		data = client_request['data']
+		sql = 'update players set ex_ip=%s,\
+					  ex_port=%s,\
+					  in_ip=%s,\
+					  in_port=%s,\
+					  nat=%s,\
+					  xnaddr=%s where session_id = %s'
+		values = (data['ex_ip'], data['ex_port'], data['in_ip'], data['in_port'],
+				data['nat'], data['xnaddr'], client_request['session_key'])
+		self._db.execute_query(sql, values)
+
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command['session_key'] = client_request['session_key']
+		return command
+
+#======CMD_GET_PLAYERLIST
+	def cmd_get_playerlist(self, client_request):
+		pass
+		#player_list': [{'espionage_lose': , 
+		#'espionage_win': , 
+		#'fob_grade': , 
+		#'fob_point': , 
+		#'fob_rank': , 
+		#'index': 0, 
+		#'is_insurance': 0, 
+		#'league_grade': , 
+		#'league_rank': , 
+		#'name': '', 
+		#'playtime': 0, 
+		#'point': 0}], 
+		#'player_num': 1,
