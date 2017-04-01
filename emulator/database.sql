@@ -17,6 +17,7 @@ create table if not exists players(
 	ex_port varchar(7),
 	in_ip varchar(16),
 	in_port varchar(7),
+	nat varchar(48),
 	xnaddr varchar(48), 
 	primary key(id)
 );

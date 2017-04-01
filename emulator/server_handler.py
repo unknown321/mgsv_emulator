@@ -25,17 +25,24 @@ class ServerHandler(object):
 			"CMD_GET_SVRTIME": self.cmd_get_srvtime,
 			"CMD_SEND_IPANDPORT": self.cmd_send_ipandport,
 			"CMD_GET_PLAYERLIST": self.cmd_get_playerlist,
+			"CMD_SET_CURRENTPLAYER": self.cmd_set_currentplayer,
+			"CMD_GET_ABOLITION_COUNT": self.cmd_get_abolition_count,
+			"CMD_GET_CHALLENGE_TASK_REWARDS": self.cmd_get_challenge_task_rewards,
+			"CMD_GET_LOGIN_PARAM": self.cmd_get_login_param,
+			"CMD_GET_COMBAT_DEPLOY_RESULT": self.cmd_get_combat_deploy_result,
 		}
 		self._db = Database()
 		self._db.connect()
 		# not sure if calls to logger will work without <self>
-		logger = Logger()
+		self.logger = Logger()
 
 	def _command_get(self, name):
 		return server_commands[name]
 
 	def process_message(self, client_request, client_ip, httpMsg=None):
 		msgid = client_request['data']['msgid']
+		self.logger.log_event(msgid)
+		command = None
 		if msgid == 'CMD_AUTH_STEAMTICKET':
 			# authenticating user, need to save ip
 			# httpMsg is encoded version of CMD_AUTH_STEAMTICKET
@@ -48,6 +55,8 @@ class ServerHandler(object):
 					command = self._handlers[msgid](client_request)
 				else:
 					command = self.get_error()
+			else:
+				command = self._handlers[msgid](client_request)
 
 		if isinstance(command, dict):
 			if 'session_key' in command:
@@ -127,7 +136,7 @@ class ServerHandler(object):
 			decoder = Decoder()
 			decoded_kon_resp = decoder.decode(proxied_response)
 
-			logger.log_event('konami resp: ' + str(decoded_kon_resp))
+			self.logger.log_event('konami resp: ' + str(decoded_kon_resp))
 
 			data = decoded_kon_resp['data']
 			player = self._db.player_find_by_steam_id(data['account_id'])
@@ -140,17 +149,17 @@ class ServerHandler(object):
 				self._populate_player_default_values(player_id)
 
 		else:
-			logger.log_event('konami returned none?')
+			self.logger.log_event('konami returned none?')
 		return decoded_kon_resp
 
 
 #======CMD_REQAUTH_HTTPS
 	def cmd_reqauth(self, client_request):
 		data = client_request['data']
-		logger.log_event('looking for steam_id {} {}'.format(data['user_name'], len(data['user_name'])))
+		self.logger.log_event('looking for steam_id {} {}'.format(data['user_name'], len(data['user_name'])))
 		player = self._db.player_find_by_steam_id(data['user_name'])
 		if len(player) != 1:
-			logger.log_event('looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
+			self.logger.log_event('looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
 		else:
 			# generate session id and crypto_key
 			session_id = self._generare_session_id()
@@ -183,7 +192,6 @@ class ServerHandler(object):
 		self._db.execute_query(sql, values)
 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
-		command['session_key'] = client_request['session_key']
 		return command
 
 #======CMD_GET_PLAYERLIST
@@ -195,7 +203,7 @@ class ServerHandler(object):
 		values = (client_request['session_key'],)
 		data = self._db.fetch_query(sql, values)[0]
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
-		d = command['player_list'][0]
+		d = command['data']['player_list'][0]
 		d['espionage_lose'] = data[0]
 		d['espionage_win'] = data[1]
 		d['fob_grade'] = data[2]
@@ -210,3 +218,49 @@ class ServerHandler(object):
 		d['point'] = data[10]
 		command['data']['player_num'] =  1
 		return command
+
+#======CMD_SET_CURRENTPLAYER
+	def cmd_set_currentplayer(self, client_request):
+		sql = 'select id from players WHERE session_id = %s'
+		values = (client_request['session_key'],)
+		data = self._db.fetch_query(sql, values)[0]
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command['data']['player_id'] = data[0]
+		return command
+
+#======CMD_GET_ABOLITION_COUNT
+	def cmd_get_abolition_count(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		d = command['data']
+		d['date'] = int(time.time())
+		d['count'] = 1
+		d['max'] = 999999
+		d['num'] = 0
+		d['status'] = 0
+		return command
+
+#======CMD_GET_CHALLENGE_TASK_REWARDS
+	def cmd_get_challenge_task_rewards(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		from .vars import task_list
+		d = command['data']
+		d['task_list'] = task_list.task_list
+		d['task_count'] = len(task_list.task_list)
+		return command
+
+#======CMD_GET_LOGIN_PARAM
+	def cmd_get_login_param(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		from .vars import login_params
+		d = command['data']
+		for key in login_params.login_params:
+			d[key] = login_params.login_params[key]
+		return command
+
+#======CMD_GET_COMBAT_DEPLOY_RESULT
+	def cmd_get_combat_deploy_result(self, client_request):
+		# TODO: need to get an example of successful combat deployment
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+
