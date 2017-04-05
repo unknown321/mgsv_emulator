@@ -242,6 +242,7 @@ class ServerHandler(object):
 #======CMD_GET_CHALLENGE_TASK_REWARDS
 	def cmd_get_challenge_task_rewards(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		# TODO: user-defined variables from mysql
 		from .vars import task_list
 		d = command['data']
 		d['task_list'] = task_list.task_list
