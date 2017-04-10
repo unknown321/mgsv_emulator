@@ -30,6 +30,18 @@ class ServerHandler(object):
 			"CMD_GET_CHALLENGE_TASK_REWARDS": self.cmd_get_challenge_task_rewards,
 			"CMD_GET_LOGIN_PARAM": self.cmd_get_login_param,
 			"CMD_GET_COMBAT_DEPLOY_RESULT": self.cmd_get_combat_deploy_result,
+			"CMD_GET_SERVER_ITEM_LIST": self.cmd_get_server_item_list,
+			"CMD_SYNC_RESOURCE": self.cmd_sync_resource,
+			"CMD_SYNC_SOLDIER_BIN": self.cmd_sync_soldier_bin,
+			"CMD_SEND_BOOT": self.cmd_send_boot,
+			"CMD_GET_INFORMATIONLIST": self.cmd_get_informationlist,
+			"CMD_SYNC_MOTHER_BASE": self.cmd_sync_mother_base,
+			"CMD_GET_FOB_STATUS": self.cmd_get_fob_status,
+			"CMD_GET_ONLINE_PRISON_LIST": self.cmd_get_online_prison_list,
+			"CMD_GET_OWN_FOB_LIST": self.cmd_get_own_fob_list,
+			"CMD_MINING_RESOURCE": self.cmd_mining_resource,
+			"CMD_UPDATE_SESSION": self.cmd_update_session,
+			"CMD_GET_CHALLENGE_TASK_TARGET_VALUES": self.cmd_get_challenge_task_target_values,
 		}
 		self._db = Database()
 		self._db.connect()
@@ -264,4 +276,76 @@ class ServerHandler(object):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
+#======CMD_GET_SERVER_ITEM_LIST_
+	def cmd_get_server_item_list(self, client_request):
+		# TODO: save data from client into json string (do we really need to save that data?)
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_SYNC_RESOURCE
+	def cmd_sync_resource(self, client_request):
+		# TODO: figure out parameters sent by client and what should we send back
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_SYNC_SOLDIER_BIN
+	def cmd_sync_soldier_bin(self, client_request):
+		# TODO: decode soldier params from binary (cheatengine guys did it)
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_SEND_BOOT_
+	def cmd_send_boot(self, client_request):
+		# ok 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_INFORMATIONLIST
+	def cmd_get_informationlist(self, client_request):
+		# TODO: fetch messages from settings or something
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_SYNC_MOTHER_BASE
+	def cmd_sync_mother_base(self, client_request):
+		 # TODO: db integration
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_FOB_STATUS
+	def cmd_get_fob_status(self, client_request):
+		# TODO: db integration
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_ONLINE_PRISON_LIST
+	def cmd_get_online_prison_list(self, client_request):
+		# TODO: get a successful response from server
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_OWN_FOB_LIST
+	def cmd_get_own_fob_list(self, client_request):
+		# TODO: db integration 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_MINING_RESOURCE
+	def cmd_mining_resource(self, client_request):
+		# TODO: db integration 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+
+#======CMD_UPDATE_SESSION
+	def cmd_update_session(self, client_request):
+		# TODO: seems ok, check different status flags 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_CHALLENGE_TASK_TARGET_VALUES
+	def cmd_get_challenge_task_target_values(self, client_request):
+		# TODO: db integration
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
 
