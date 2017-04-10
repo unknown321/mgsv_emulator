@@ -224,10 +224,10 @@ commlist = [
                 "CMD_AUTH_NPTICKET": {
                         "compress": False,
                         "data": {
-                                "country": "ca",
+                                "country": "ww",
                                 "lang": "en",
                                 "msgid": "CMD_AUTH_NPTICKET",
-                                "region": 2,
+                                "region": 4,
                                 "rqid": 0,
                                 "np_ticket": settings.NPTICKET,
                                 "np_ticket_size": settings.NP_TICKET_SIZE

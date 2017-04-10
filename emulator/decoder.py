@@ -79,7 +79,6 @@ class Decoder(object):
 
 			full_text += x_text + y_text
 			offset = offset+8
-		print(full_text)
 		return full_text
 
 	def decode(self, data):
