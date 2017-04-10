@@ -29,7 +29,7 @@ class Decoder(object):
 
 
 #================= remove dirty hack
-		crypto_key = bytearray(base64.decodestring('AAAAAAAAAAAAAAAAAAAAAA=='.encode()))
+#		crypto_key = bytearray(base64.decodestring('AAAAAAAAAAAAAAAAAAAAAA=='.encode()))
 #================= remove dirty hack
 
 
@@ -40,7 +40,7 @@ class Decoder(object):
 	def __get_crypto_key__(self, data):
 		crypto_key = None
 		if 'data' in data:
-			if type(data['data']) == dict:
+			if isinstance(data['data'], dict):
 				if 'crypto_key' in data['data']:
 					if len(data['data']['crypto_key']) > 0:
 						crypto_key = bytearray(base64.decodestring(data['data']['crypto_key'].encode()))
@@ -79,6 +79,7 @@ class Decoder(object):
 
 			full_text += x_text + y_text
 			offset = offset+8
+		print(full_text)
 		return full_text
 
 	def decode(self, data):
@@ -118,10 +119,10 @@ class Decoder(object):
 			if data_json['compress']:
 				data_json['data'] = zlib.decompress(base64.decodestring(data_json['data'].encode()))
 
-		if type(data_json['data']) == bytes:
+		if isinstance(data_json['data'], bytes):
 			data_json['data'] = data_json['data'].decode()
 
-		if 'original_size' in data_json and type(data_json['data']) == str:
+		if 'original_size' in data_json and isinstance(data_json['data'], str):
 			# remove padding and convert to json
 			data_json['data'] = data_json['data'][:data_json['original_size']]
 			try:

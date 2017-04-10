@@ -67,7 +67,7 @@ class blowfish(object):
 				j = j+1
 				if j >= len(key):
 					j = 0
-				p = self.__swap32__(encoder_consts.PI_P_ARRAY[i])
+				p = self.__swap32__(copy.deepcopy(encoder_consts.PI_P_ARRAY[i]))
 				v = self.__to_clong__(p ^ data)
 			self.__P__.append(v)
 

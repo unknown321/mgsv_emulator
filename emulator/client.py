@@ -5,17 +5,19 @@ from .client_commands import client_commands, urls
 from .httpclient import HttpClient
 from datetime import datetime
 from . import settings
+from copy import deepcopy
 
 class Client(object):
 	"""mgsv client"""
-	def __init__(self):
+	def __init__(self, platform='stm'):
 		super(Client, self).__init__()
 		self.__session_key__ = None
 		self.__encoder__ = Encoder()
 		self.__decoder__ = Decoder()
+		self.__platform__ = platform
 
 	def __command_get__(self, name):
-		return client_commands[name]
+		return deepcopy(client_commands[name])
 
 	def __append_session_key__(self, command):
 		if command['session_key'] == -1:
@@ -44,10 +46,11 @@ class Client(object):
 		self.__append_session_key__(comm)
 		encrypted_request = self.__encoder__.encode(comm)
 		for url in urls:
-			if command in urls[url]:
-				print(command, url)
-				r = httpclient.send(encrypted_request, url)
-				return self.__parse_response__(r)
+			if 'tpp'+self.__platform__ in url:
+				if command in urls[url]:
+					#print(command, url)
+					r = httpclient.send(encrypted_request, url)
+					return self.__parse_response__(r)
 
 	def __log__(self, data):
 		f = open(settings.LOG_PATH,'a')
@@ -72,8 +75,12 @@ class Client(object):
 			'CMD_GET_SVRLIST',
 			# 'CMD_AUTH_STEAMTICKET',		# you will need to set up ticket and its size; tickets also expire
 			'CMD_GET_SVRTIME',
-			'CMD_REQAUTH_HTTPS'
 		]
+
+		if self.__platform__ == 'ps3':
+			commands.append('CMD_REQAUTH_HTTPS_PS3')
+		elif self.__platform__ == 'stm':
+			commands.append('CMD_REQAUTH_HTTPS')
 
 		for i in commands:
 			responses.append(self.send_command(i))

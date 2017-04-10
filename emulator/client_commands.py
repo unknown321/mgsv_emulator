@@ -2,7 +2,7 @@ from collections import OrderedDict
 from . import settings
 
 urls = {
-	"tppps3":"gate responds, but we don't have auth info (parameter names and values)",
+#	"tppps3":"gate responds, but we don't have auth info (parameter names and values)",
 	"tppps4":"same",
 	"tpp360":"uses different static enc key",
 	"tppone":"uses different static enc key",
@@ -11,6 +11,19 @@ urls = {
 	"mgoone":"xbone mgo",
 	"mgops3":"you got the idea",
 	"mgops4":"yea",
+	"/tppps3/gate":[
+                "CMD_GET_INFORMATIONLIST",
+                "CMD_GET_SVRLIST",
+                "CMD_GET_SVRTIME",
+                "CMD_GET_URLLIST"
+	],
+
+	"/tppps3/main":[
+		"CMD_AUTH_NPTICKET",
+		"CMD_REQAUTH_HTTPS_PS3",
+		"CMD_GET_ABOLITION_COUNT"
+	],
+
 	"/tppstm/gate":[
 		"CMD_GET_INFORMATIONLIST",
 		"CMD_GET_SVRLIST",
@@ -207,6 +220,25 @@ commlist = [
 		}
 	},
 
+        {
+                "CMD_AUTH_NPTICKET": {
+                        "compress": False,
+                        "data": {
+                                "country": "ca",
+                                "lang": "en",
+                                "msgid": "CMD_AUTH_NPTICKET",
+                                "region": 2,
+                                "rqid": 0,
+                                "np_ticket": settings.NPTICKET,
+                                "np_ticket_size": settings.NP_TICKET_SIZE
+                        },
+                        "original_size": 0,
+                        "session_crypto": False,
+                        "session_key": "" 
+                }
+        },
+
+
 	{
 		"CMD_GET_INFORMATIONLIST": {
 			'compress': False, 
@@ -254,6 +286,24 @@ commlist = [
 			'session_key': ''
 		}
 	},
+
+        {
+                "CMD_REQAUTH_HTTPS_PS3": {
+                        'compress': False,
+                        'data': {
+                                'is_tpp': 1,
+                                'msgid': 'CMD_REQAUTH_HTTPS',
+                                'platform': 'PS3',
+                                'rqid': 0,
+                                'ugc': 1,
+                                'user_name': settings.PS3_PSN_ID,         # get it from psn ticket
+                                'ver': 'NotImplement'
+                        },
+                        'original_size': 0,
+                        'session_crypto': False,
+                        'session_key': ''
+                }
+        },
 
 	{
 		"CMD_SEND_IPANDPORT": {
