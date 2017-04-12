@@ -315,8 +315,31 @@ class ServerHandler(object):
 
 #======CMD_SYNC_MOTHER_BASE
 	def cmd_sync_mother_base(self, client_request):
-		# TODO: db integration
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		# removing unneeded keys, list of keys:
+		# equip_flag
+		# equip_grade
+		# flag
+		# invalid_fob
+		# local_base_param
+		# local_base_time
+		# mother_base_num
+		# mother_base_param
+		# msgid
+		# name_plate_id
+		# pf_skill_staff
+		# pickup_open
+		# rqid
+		# section_open
+		# security_level
+		# tape_flag
+		# version
+		data = client_request['data']
+		data.pop('msgid')
+		# TODO: figure out proper syntax for inserting json
+		sql = 'update player_vars set sync_mother_base=%s'
+		values = (data,)
+		self._db.execute_query(sql, values)
 		return command
 
 #======CMD_GET_FOB_STATUS
