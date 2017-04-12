@@ -282,7 +282,7 @@ class ServerHandler(object):
 		# ie client has development rank of 5 - we return items for ranks 1-5
 		# this logic is probably depedent on vars in weapon-related luas which is not covered in emulator
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
-		from vars import server_items
+		from .vars import server_items
 		command['data']['item_list'] = copy.deepcopy(server_items.items)
 		return command
 
@@ -306,8 +306,10 @@ class ServerHandler(object):
 
 #======CMD_GET_INFORMATIONLIST
 	def cmd_get_informationlist(self, client_request):
-		# TODO: fetch messages from settings or something
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		from .vars import infolist
+		command['data']['info_list'] = copy.deepcopy(info_list.info_list)
+		command['data']['info_num'] = len(command['data']['info_list'])
 		return command
 
 #======CMD_SYNC_MOTHER_BASE
