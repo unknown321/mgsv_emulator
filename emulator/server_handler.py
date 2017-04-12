@@ -283,7 +283,8 @@ class ServerHandler(object):
 		# this logic is probably depedent on vars in weapon-related luas which is not covered in emulator
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		from .vars import server_items
-		command['data']['item_list'] = copy.deepcopy(server_items.items)
+		command['data']['item_list'] = copy.deepcopy(server_items.item_list)
+		command['data']['item_num'] = len(command['data']['item_list'])
 		return command
 
 #======CMD_SYNC_RESOURCE
