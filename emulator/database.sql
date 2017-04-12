@@ -23,6 +23,8 @@ create table if not exists players(
 );
 
 
+-- jdoc is the type for JSON
+
 create table if not exists player_vars(
 	id int not null auto_increment,
 	player_id int not null,

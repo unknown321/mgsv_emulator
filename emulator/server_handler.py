@@ -278,8 +278,12 @@ class ServerHandler(object):
 
 #======CMD_GET_SERVER_ITEM_LIST_
 	def cmd_get_server_item_list(self, client_request):
-		# TODO: save data from client into json string (do we really need to save that data?)
+		# list of returned items depends on client development rate
+		# ie client has development rank of 5 - we return items for ranks 1-5
+		# this logic is probably depedent on vars in weapon-related luas which is not covered in emulator
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		from vars import server_items
+		command['data']['item_list'] = copy.deepcopy(server_items.items)
 		return command
 
 #======CMD_SYNC_RESOURCE
@@ -308,7 +312,7 @@ class ServerHandler(object):
 
 #======CMD_SYNC_MOTHER_BASE
 	def cmd_sync_mother_base(self, client_request):
-		 # TODO: db integration
+		# TODO: db integration
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
