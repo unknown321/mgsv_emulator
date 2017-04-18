@@ -6,6 +6,7 @@ from .httpclient import HttpClient
 from datetime import datetime
 from . import settings
 from copy import deepcopy
+from .logger import Logger
 
 class Client(object):
 	"""mgsv client"""
@@ -15,6 +16,7 @@ class Client(object):
 		self.__encoder__ = Encoder()
 		self.__decoder__ = Decoder()
 		self.__platform__ = platform
+		self._logger = Logger()
 
 	def __command_get__(self, name):
 		return deepcopy(client_commands[name])
@@ -52,18 +54,13 @@ class Client(object):
 					r = httpclient.send(encrypted_request, url)
 					return self.__parse_response__(r)
 
-	def __log__(self, data):
-		f = open(settings.LOG_PATH,'a')
-		f.write(settings.LOG_FORMAT.format(curdate=str(datetime.now()), data=str(data)))
-		f.close()
-
 	def __parse_response__(self, r):
 		if r.status_code != 200:
 			print(r.status_code, r.text)
 			return {}
 		text = self.__response_decode__(r)
 		if text['data']['result'] != 'NOERR':
-			self.__log__([r.url, text])
+			self._logger.log_event("{} {}".format(r.url,text))
 		self.__response_get_keys__(text)
 		return text
 
