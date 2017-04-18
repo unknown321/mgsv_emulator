@@ -42,18 +42,18 @@ class ServerHandler(object):
 			"CMD_MINING_RESOURCE": self.cmd_mining_resource,
 			"CMD_UPDATE_SESSION": self.cmd_update_session,
 			"CMD_GET_CHALLENGE_TASK_TARGET_VALUES": self.cmd_get_challenge_task_target_values,
+			"CMD_GET_FOB_NOTICE": self.cmd_get_fob_notice,
 		}
 		self._db = Database()
 		self._db.connect()
-		# not sure if calls to logger will work without <self>
-		self.logger = Logger()
+		self._logger = Logger()
 
 	def _command_get(self, name):
 		return server_commands[name]
 
 	def process_message(self, client_request, client_ip, httpMsg=None):
 		msgid = client_request['data']['msgid']
-		self.logger.log_event(msgid)
+		self._logger.log_event(_text=msgid)
 		command = None
 		if msgid == 'CMD_AUTH_STEAMTICKET':
 			# authenticating user, need to save ip
@@ -82,17 +82,22 @@ class ServerHandler(object):
 		else:
 			pass
 
-	def _populate_player_default_values(self, player_id):
-		pass
+	def _populate_player_default_values(self, player_id, steam_id):
+		sql = 'insert into player_vars(player_id, espionage_lose, espionage_win, \
+			fob_grade, fob_point, fob_rank, is_insurance, league_grade,  \
+			league_rank, name, playtime, point) values \
+			(%s, %s , %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+		values = (player_id, 0, 0, 11, 12345, 1, 1, 1, 1, '{}_player01'.format(str(steam_id)), 0, 0)
+		self._db.execute_query(sql,values)
 
-	def _append_session_key(self, command):
-		# session key is required for command
-		# db.get_session_key
-		# do I really need that function?
-		if self.__session_key__:
-			command['session_key'] = 'fgsfds'
-		else:
-			raise Exception('Session key is required for this command, but no key provided')
+#	def _append_session_key(self, command):
+#		# session key is required for command
+#		# db.get_session_key
+#		# do I really need that function?
+#		if self.__session_key__:
+#			command['session_key'] = 'fgsfds'
+#		else:
+#			raise Exception('Session key is required for this command, but no key provided')
 
 	def get_error(self):
 		# TODO: find all ERR_ codes and use them
@@ -115,8 +120,10 @@ class ServerHandler(object):
 	def _generate_crypto_key(self):
 		return 'AAAAAAAAAAAAAAAAAAAAAA=='
 
-	def _generare_session_id(self):
-		return 'fgsfds'
+	def _generate_session_id(self):
+		from hashlib import md5
+		t = datetime.timestamp(datetime.now())
+		return md5(str(t).encode()).hexdigest()
 
 
 #======CMD_GET_URLLIST
@@ -148,33 +155,33 @@ class ServerHandler(object):
 			decoder = Decoder()
 			decoded_kon_resp = decoder.decode(proxied_response)
 
-			self.logger.log_event('konami resp: ' + str(decoded_kon_resp))
+			self._logger.log_event('konami resp: ' + str(decoded_kon_resp))
 
 			data = decoded_kon_resp['data']
 			player = self._db.player_find_by_steam_id(data['account_id'])
 			if player:
-				#update
-				pass
+				self._logger.log_event('found player {}'.format(data['account_id']))
 			else:
+				self._logger.log_event('adding new player {}'.format(data['account_id']))
 				self._db.player_add(data, client_ip)
-				player_id = self._db.player_find_by_steam_id(data['account_id'])[0]
-				self._populate_player_default_values(player_id)
+				player_id = self._db.player_find_by_steam_id(data['account_id'])[0][0]
+				self._populate_player_default_values(player_id, data['account_id'])
 
 		else:
-			self.logger.log_event('konami returned none?')
+			self._logger.log_event('konami returned none?')
 		return decoded_kon_resp
 
 
 #======CMD_REQAUTH_HTTPS
 	def cmd_reqauth(self, client_request):
 		data = client_request['data']
-		self.logger.log_event('looking for steam_id {} {}'.format(data['user_name'], len(data['user_name'])))
+		self._logger.log_event('Looking for steam_id {}'.format(data['user_name']))
 		player = self._db.player_find_by_steam_id(data['user_name'])
 		if len(player) != 1:
-			self.logger.log_event('looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
+			self._logger.log_event('Looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
 		else:
 			# generate session id and crypto_key
-			session_id = self._generare_session_id()
+			session_id = self._generate_session_id()
 			crypto_key = self._generate_crypto_key()
 
 			sql = 'update players set magic_hash=%s, \
@@ -309,12 +316,15 @@ class ServerHandler(object):
 	def cmd_get_informationlist(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		from .vars import infolist
-		command['data']['info_list'] = copy.deepcopy(info_list.info_list)
+		command['data']['info_list'] = copy.deepcopy(infolist.info_list)
 		command['data']['info_num'] = len(command['data']['info_list'])
 		return command
 
 #======CMD_SYNC_MOTHER_BASE
 	def cmd_sync_mother_base(self, client_request):
+		# TODO: just saving data, probably will need to parse and insert in properly
+		# json columns are not supported in my version of mysql
+		# still possible to save as plain text and json.loads it
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		# removing unneeded keys, list of keys:
 		# equip_flag
@@ -336,9 +346,8 @@ class ServerHandler(object):
 		# version
 		data = client_request['data']
 		data.pop('msgid')
-		# TODO: figure out proper syntax for inserting json
 		sql = 'update player_vars set sync_mother_base=%s'
-		values = (data,)
+		values = (str(data),)
 		self._db.execute_query(sql, values)
 		return command
 
@@ -366,7 +375,6 @@ class ServerHandler(object):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-
 #======CMD_UPDATE_SESSION
 	def cmd_update_session(self, client_request):
 		# TODO: seems ok, check different status flags 
@@ -376,6 +384,12 @@ class ServerHandler(object):
 #======CMD_GET_CHALLENGE_TASK_TARGET_VALUES
 	def cmd_get_challenge_task_target_values(self, client_request):
 		# TODO: db integration
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_FOB_NOTICE
+	def cmd_get_fob_notice(self, client_request):
+		# TODO: tight db integration 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 

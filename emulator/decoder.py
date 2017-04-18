@@ -112,7 +112,9 @@ class Decoder(object):
 					data_json['data'] = zlib.decompress(data_json['data'])
 			else:
 				# encryption is used, but we have no session key
-				raise ValueError('Message is encoded, but no crypto_key was provided')
+				# this is ok, since we need to get enc key from mysql using session id
+				#raise ValueError('Message is encoded, but no crypto_key was provided')
+				pass
 		else:
 			# no encryption, used in CMD_GET_URLLIST and others before getting session key
 			if data_json['compress']:

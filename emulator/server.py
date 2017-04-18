@@ -6,6 +6,8 @@ from datetime import datetime
 from . import settings
 from .server_handler import ServerHandler
 import base64
+from database import Database
+from .logger import Logger
 
 class Server(object):
 	"""mgsv server"""
@@ -14,6 +16,7 @@ class Server(object):
 		self._session_key__ = None
 		self._encoder = Encoder()
 		self._decoder = Decoder()
+		self._logger = Logger()
 
 	def process_request(self, httpMsg, client_ip):
 		try:
@@ -22,18 +25,32 @@ class Server(object):
 			# log_event(str(e))
 			raise e
 		else:
-			handler = ServerHandler()
+			# if session_key is present, then this is an post-auth encrypted session
+			# it already uses enc keys, so we need to pull them from db and re-initialize encoder and decoder
+			session_key = request['session_key']
+
+			if request['session_crypto']:
+				db = Database()
+				db.connect()
+				player = db.player_find_by_session_id(session_key, get_dict=True)
+				if len(player) == 1:
+					player = player[0]
+				else:
+					self._logger.log_event('Found {} players with session_key {}'.format(len(player), session_key))
+					raise ValueError
+
+				self._encoder.__init_session_blowfish__(player['crypto_key'])
+				self._decoder.__init_session_blowfish__(player['crypto_key'])
+				request = self._decoder.decode(str(httpMsg))
+
 			msgid = request['data']['msgid']
-			# log_event('New message arrived: {}'.format(msgid))
+			#self._logger.log_event('New message arrived: {}'.format(msgid))
+
+			handler = ServerHandler()
 			if msgid != 'CMD_AUTH_STEAMTICKET':
 				command = handler.process_message(request, client_ip)
 			else:
 				command = handler.process_message(request, client_ip, httpMsg)
-
-			if request['session_crypto']:
-				# find user in db and get his cryptokey
-				crypto_key = 'AAAAAAAAAAAAAAAAAAAAAA=='
-				self._encoder.__init_session_blowfish__(crypto_key)
 
 		return self._encoder.encode(command)
 

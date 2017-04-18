@@ -23,7 +23,7 @@ create table if not exists players(
 );
 
 
--- jdoc is the type for JSON
+-- json is not supported in my server version
 
 create table if not exists player_vars(
 	id int not null auto_increment,
@@ -41,8 +41,7 @@ create table if not exists player_vars(
 	playtime int, 
 	point int,
 	player_num int, -- always 1
-	sync_mother_base json default null, 	-- client data from sync_mother_base
-
+	sync_mother_base longtext default null, 	-- client data from sync_mother_base
 	primary key(id),
-	foreign key (player_id) references players(id) on delete cascade
+	foreign key(player_id) references players(id) on delete cascade
 );

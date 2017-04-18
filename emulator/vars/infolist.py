@@ -12,5 +12,4 @@ info_list =  [
 			# <I=C=cmn-sys-txt-base|0>
 			# <I=C=cmn-col-ng|%d>
 			# <I=C=cmn-col-special|+%d>
-		]
-
+]
