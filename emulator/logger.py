@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import settings
+from . import settings
 from datetime import datetime
 
 class Logger(object):
