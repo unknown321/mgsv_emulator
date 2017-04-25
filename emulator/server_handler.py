@@ -18,6 +18,7 @@ class ServerHandler(object):
 	original size is calculated after session encoding"""
 	def __init__(self):
 		self._handlers = {
+			"CMD_GENERIC_ERROR": self.cmd_generic_error,
 			"CMD_AUTH_STEAMTICKET": self.cmd_auth_ticket,
 			"CMD_REQAUTH_HTTPS": self.cmd_reqauth,
 			"CMD_GET_URLLIST": self.cmd_get_urllist,
@@ -64,7 +65,18 @@ class ServerHandler(object):
 			if client_request['session_key']:
 				player = self._db.player_find_by_session_id(client_request['session_key'])
 				if len(player) == 1:
-					command = self._handlers[msgid](client_request)
+
+					try:
+						command = self._handlers[msgid](client_request)
+					except KeyError:
+						self._logger.log_event('--msgid not found: {}'.format(msgid))
+						command = self._handlers['CMD_GENERIC_ERROR']()
+						command['data']['msgid'] = msgid
+					except:
+						raise
+					else:
+						pass
+						#command(client_request)
 				else:
 					command = self.get_error()
 			else:
@@ -124,6 +136,10 @@ class ServerHandler(object):
 		from hashlib import md5
 		t = datetime.timestamp(datetime.now())
 		return md5(str(t).encode()).hexdigest()
+
+	def cmd_generic_error(self):
+		command = copy.deepcopy(self._command_get('CMD_GET_SVRTIME'))
+		return command
 
 
 #======CMD_GET_URLLIST
@@ -304,6 +320,54 @@ class ServerHandler(object):
 	def cmd_sync_soldier_bin(self, client_request):
 		# TODO: decode soldier params from binary (cheatengine guys did it)
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		import base64
+		b = base64.decodestring(client_request['data']['soldier_param'].encode())
+		soldier_count = 0
+		soldiers = [b[i:i+24] for i in range(0, len(b), 24)]
+		import binascii
+		for n,solly in enumerate(soldiers):
+			soldiers[n] = solly[8:]
+			#solly[0:8]:
+			#------------------------
+			#    0: always 0
+			#    1: direct contract
+			#    2: always 0
+			#    3: values from 0 to 9, numbers look like amount of staff per platform (but there are only 7 platforms, brig+medi?)
+			#    4: always 0
+			#    5: values 0, 3-9, probably something about stats, I have a lot of 9 (~2700)
+			#    6: always 0
+			#    7: values 0, 3-9, numbers look like 5th byte, but slightly different
+			#------------------------
+			#
+			# python > 3.5
+			#if solly.hex() != '0'*32:
+			#	soldier_count +=1
+			if binascii.hexlify(soldiers[n]) != b'0'*32:
+				soldier_count +=1
+			soldiers_out = b''.join(soldiers)
+		command['data']['soldier_param'] = base64.encodestring(soldiers_out).decode().replace('\n','')
+		command['data']['soldier_num'] = soldier_count
+		command['data']['version'] = client_request['data']['version'] + 1
+		# #self._logger.log_event(command)
+
+
+	#	import json
+	#	from .client_proxy import ClientProxy
+	#	proxy = ClientProxy()
+
+	#	if client_request['data']['soldier_num'] > 0:
+	#		f = open('/tmp/sol_request','w')
+	#		f.write(json.dumps(client_request))
+	#		f.close()
+	#		self._logger.log_event('DUMPONG CLIENT REQ!!')
+
+	#	command = proxy.send_full_command_with_auth(client_request, 'CMD_SYNC_SOLDIER_BIN')
+	#	#if proxied_response:
+	#	d = open('/tmp/sol_response','w')
+	#	d.write(json.dumps(command))
+	#	d.close()
+	#	self._logger.log_event('DUMPONG KONAMI RESP!!')
+	#	command['session_key'] = -1
 		return command
 
 #======CMD_SEND_BOOT_
