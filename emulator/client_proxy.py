@@ -23,10 +23,7 @@ class ClientProxy(object):
 
 	def send_full_command(self, command, command_name):
 		# just take whole command and send it to konami
-		# this exact command will work only for commands before authentication
-		# TODO: make a proper version that will figure out if we need to log in on konami servers
-
-		# bad import, move upward
+		# this exact command will work only for CMDs before authentication
 		httpclient = HttpClient()
 		r = None
 		for url in urls:
@@ -39,6 +36,10 @@ class ClientProxy(object):
 			return r
 
 	def send_full_command_with_auth(self, command, command_name):
+		# TODO:  
+		# find user in database by his session key
+		# use his steamid and password in Client constructor
+		# current behaviour - steamid and passwd are pulled from settings
 		c = Client()
 		c.login()
 		command['session_key'] = c.__session_key__

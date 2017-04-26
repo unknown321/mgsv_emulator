@@ -10,3 +10,8 @@ class Logger(object):
 		logfile = open(settings.LOG_PATH,'a')
 		logfile.write(settings.LOG_FORMAT.format(curdate=datetime.now(), event_type=event_type, data=_text))
 		logfile.close()
+
+	def log_error(self, _text):
+		logfile = open(settings.ERROR_LOG_PATH, 'a')
+		logfile.write(settings.LOG_FORMAT.format(curdate=datetime.now(), event_type='ERROR', data=_text))
+		logfile.close()

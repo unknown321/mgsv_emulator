@@ -44,6 +44,8 @@ class ServerHandler(object):
 			"CMD_UPDATE_SESSION": self.cmd_update_session,
 			"CMD_GET_CHALLENGE_TASK_TARGET_VALUES": self.cmd_get_challenge_task_target_values,
 			"CMD_GET_FOB_NOTICE": self.cmd_get_fob_notice,
+			"CMD_SEND_MISSION_RESULT": self.cmd_send_mission_result,
+			"CMD_GET_DAILY_REWARD": self.cmd_get_daily_reward,
 		}
 		self._db = Database()
 		self._db.connect()
@@ -70,6 +72,7 @@ class ServerHandler(object):
 						command = self._handlers[msgid](client_request)
 					except KeyError:
 						self._logger.log_event('--msgid not found: {}'.format(msgid))
+						self._logger.log_error("missing MSGID {}:\n{}".format(msgid, client_request))
 						command = self._handlers['CMD_GENERIC_ERROR']()
 						command['data']['msgid'] = msgid
 					except:
@@ -454,6 +457,19 @@ class ServerHandler(object):
 #======CMD_GET_FOB_NOTICE
 	def cmd_get_fob_notice(self, client_request):
 		# TODO: tight db integration 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_SEND_MISSION_RESULT
+	def cmd_send_mission_result(self, client_request):
+		# TODO: do we really need to save that data? 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_DAILY_REWARD
+	def cmd_get_daily_reward(self, client_request):
+		# TODO: figure out personell
+		# we should save info about online resources for auto-accepted rewards
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
