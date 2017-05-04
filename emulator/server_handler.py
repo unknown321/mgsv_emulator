@@ -321,6 +321,9 @@ class ServerHandler(object):
 
 #======CMD_SYNC_SOLDIER_BIN
 	def cmd_sync_soldier_bin(self, client_request):
+		# essentially, this command does nothing for client
+		# if server sends data that differs from client data, client will lose soldiers that were modified
+		# so all you need is to count soldiers, strip some data and send it back
 		# TODO: decode soldier params from binary (cheatengine guys did it)
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		import base64
@@ -469,7 +472,57 @@ class ServerHandler(object):
 #======CMD_GET_DAILY_REWARD
 	def cmd_get_daily_reward(self, client_request):
 		# TODO: figure out personell
-		# we should save info about online resources for auto-accepted rewards
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		random_reward = self._generate_random_daily_reward()
+		command['data']['count'] = random_reward['amount']
+		command['data']['reward_type'] = random_reward['id']
+		# if random_reward['is_online']:
+		#	TODO: update  mysql values
 		return command
 
+	def _generate_random_daily_reward(self):
+		cars = {'range_low':1,
+			'range_high':10,
+			'online_ids':[27,29],
+			'offline_ids':[59,61]
+			}
+		flowers = {
+			'range_low':50,
+			'range_high':2000,
+			'online_ids':[17,18,19,20,21,22,23,24],
+			'offline_ids':[49,50,51,52,53,54,55,56]
+			}
+		resources = {
+			'range_low':1000,
+			'range_high':10000,
+			'online_ids':[12,13,14,15,16],
+			'offline_ids':[44,45,46,47,48]
+			}
+		soldiers = {
+			'range_low':5,
+			'range_high':20,
+			'online_ids':[2,3,4,5,6,7,8,9,10,11],
+			'offline_ids':[34,35,36,37,38,39,40,41,42,43]
+			}
+		gmp = {
+			'range_low':10000,
+			'range_high':1000000,
+			'online_ids':[1],
+			'offline_ids':[33]
+			}
+		# mb coins = 26/58
+		# esp score 30/62
+		# liquid carb missilies 31/63 
+		# volgas 28/60 
+
+		rewards = [cars, flowers, resources, soldiers, gmp]
+		import random
+		reward_type = random.choice(rewards)
+		reward_is_online = bool(random.getrandbits(1))
+		if reward_is_online:
+			online_key = 'online_ids'
+		else:
+			online_key = 'offline_ids'
+		reward_id = random.choice(reward_type[online_key])
+		reward_amount = random.choice(range(reward_type['range_low'], reward_type['range_high']+1))
+		return {'id':reward_id, 'amount':reward_amount, 'is_online':reward_is_online}
