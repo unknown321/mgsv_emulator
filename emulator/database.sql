@@ -41,6 +41,8 @@ create table if not exists player_vars(
 	playtime int, 
 	point int,
 	player_num int, -- always 1
+	-- data from sync_mother_base:
+	mother_base_num int,
 	sync_mother_base longtext default null, 	-- client data from sync_mother_base
 	primary key(id),
 	foreign key(player_id) references players(id) on delete cascade

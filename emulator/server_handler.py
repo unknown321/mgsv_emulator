@@ -16,7 +16,7 @@ class ServerHandler(object):
 	"""class that processes requests and composes answers
 	however, last changes to command are made by encoder:
 	original size is calculated after session encoding"""
-	def __init__(self):
+	def __init__(self, player=None):
 		self._handlers = {
 			"CMD_GENERIC_ERROR": self.cmd_generic_error,
 			"CMD_AUTH_STEAMTICKET": self.cmd_auth_ticket,
@@ -46,10 +46,13 @@ class ServerHandler(object):
 			"CMD_GET_FOB_NOTICE": self.cmd_get_fob_notice,
 			"CMD_SEND_MISSION_RESULT": self.cmd_send_mission_result,
 			"CMD_GET_DAILY_REWARD": self.cmd_get_daily_reward,
+			"CMD_GET_FOB_REWARD_LIST": self.cmd_get_fob_reward_list,
+			"CMD_GET_PLAYER_PLATFORM_LIST": self.cmd_get_player_platform_list,
 		}
 		self._db = Database()
 		self._db.connect()
 		self._logger = Logger()
+		self._player = player
 
 	def _command_get(self, name):
 		return server_commands[name]
@@ -65,9 +68,8 @@ class ServerHandler(object):
 		else:
 			# every other command, process as usual
 			if client_request['session_key']:
-				player = self._db.player_find_by_session_id(client_request['session_key'])
-				if len(player) == 1:
-
+				player = self._db.player_find_by_session_id(client_request['session_key'], get_dict=True)
+				if isinstance(player, dict):
 					try:
 						command = self._handlers[msgid](client_request)
 					except KeyError:
@@ -81,6 +83,7 @@ class ServerHandler(object):
 						pass
 						#command(client_request)
 				else:
+					# not a dict, list of dicts or None
 					command = self.get_error()
 			else:
 				command = self._handlers[msgid](client_request)
@@ -396,6 +399,10 @@ class ServerHandler(object):
 		# json columns are not supported in my version of mysql
 		# still possible to save as plain text and json.loads it
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		player = self._db.player_find_by_session_id(client_request['session_key'], get_dict=True)
+		sql = 'update player_vars set mother_base_num=%s where player_id=%s'
+		values = (client_request['data']['mother_base_num'], player['id'])
+		self._db.execute_query(sql, values)
 		# removing unneeded keys, list of keys:
 		# equip_flag
 		# equip_grade
@@ -416,8 +423,8 @@ class ServerHandler(object):
 		# version
 		data = client_request['data']
 		data.pop('msgid')
-		sql = 'update player_vars set sync_mother_base=%s'
-		values = (str(data),)
+		sql = 'update player_vars set sync_mother_base=%s where player_id=%s'
+		values = (str(data),player['id'])
 		self._db.execute_query(sql, values)
 		return command
 
@@ -526,3 +533,26 @@ class ServerHandler(object):
 		reward_id = random.choice(reward_type[online_key])
 		reward_amount = random.choice(range(reward_type['range_low'], reward_type['range_high']+1))
 		return {'id':reward_id, 'amount':reward_amount, 'is_online':reward_is_online}
+
+
+#======CMD_GET_FOB_REWARD_LIST_
+	def cmd_get_fob_reward_list(self, client_request):
+		# TODO: figure out fob reward format
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command['data']['version'] = client_request['data']['version'] + 1
+		return command
+
+#======CMD_GET_PLAYER_PLATFORM_LIST
+	def cmd_get_player_platform_list(self, client_request):
+		sql = 'select mother_base_num from player_vars where player_id=%s'
+		values = (str(self._player['id']),)
+		mb_num = self._db.fetch_query(sql, values)[0][0]
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		info_dict = copy.deepcopy(command['data']['info_list'][0])
+		command['data']['info_list'] = []
+		for i in range(0,mb_num*8):
+			command['data']['info_list'].append(info_dict)
+		command['data']['info_num'] = len(command['data']['info_list'])
+		return command
+
+
