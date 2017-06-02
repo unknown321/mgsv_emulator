@@ -48,6 +48,7 @@ class ServerHandler(object):
 			"CMD_GET_DAILY_REWARD": self.cmd_get_daily_reward,
 			"CMD_GET_FOB_REWARD_LIST": self.cmd_get_fob_reward_list,
 			"CMD_GET_PLAYER_PLATFORM_LIST": self.cmd_get_player_platform_list,
+			"CMD_SYNC_LOADOUT": self.cmd_sync_loadout,
 		}
 		self._db = Database()
 		self._db.connect()
@@ -343,9 +344,9 @@ class ServerHandler(object):
 			#    2: always 0
 			#    3: values from 0 to 9, numbers look like amount of staff per platform (but there are only 7 platforms, brig+medi?)
 			#    4: always 0
-			#    5: values 0, 3-9, probably something about stats, I have a lot of 9 (~2700)
+			#    5: values 0, 3-9, probably something about stats, I have a lot of 9 (~2700) - base stats?
 			#    6: always 0
-			#    7: values 0, 3-9, numbers look like 5th byte, but slightly different
+			#    7: values 0, 3-9, numbers look like 5th byte, but slightly different - base stats+buffs?
 			#------------------------
 			#
 			# python > 3.5
@@ -544,15 +545,22 @@ class ServerHandler(object):
 
 #======CMD_GET_PLAYER_PLATFORM_LIST
 	def cmd_get_player_platform_list(self, client_request):
+	#untested
 		sql = 'select mother_base_num from player_vars where player_id=%s'
 		values = (str(self._player['id']),)
 		mb_num = self._db.fetch_query(sql, values)[0][0]
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		info_dict = copy.deepcopy(command['data']['info_list'][0])
 		command['data']['info_list'] = []
-		for i in range(0,mb_num*8):
+		for i in range(0, mb_num*8):
 			command['data']['info_list'].append(info_dict)
 		command['data']['info_num'] = len(command['data']['info_list'])
 		return command
 
+#======CMD_SYNC_LOADOUT
+	def cmd_sync_loadout(self, client_request):
+	#untested
+		# do we need to save loadout for some reason or is it just for checks? 
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
 
