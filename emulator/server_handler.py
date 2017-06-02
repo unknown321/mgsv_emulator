@@ -122,20 +122,6 @@ class ServerHandler(object):
 		# TODO: find all ERR_ codes and use them
 		return 1
 
-	# BAD
-	# def _append_date(self, command):
-	# 	unix_time = int(time.time())
-	# 	if command['data']['msgid'] == 'CMD_GET_SVRTIME':
-	# 		command['data']['date'] = unix_time
-
-	# 	if command['data']['msgid'] == 'CMD_GET_ABOLITION_COUNT':
-	# 		command['data']['info']['date'] = unix_time
-
-	# 	if command['data']['msgid'] == 'CMD_GET_INFORMATIONLIST':
-	# 		for i in command['data']['info_list']:
-	# 			i['date'] = unix_time
-	# 		command['data']['info_num'] = len(command['data']['info_list'])
-
 	def _generate_crypto_key(self):
 		return 'AAAAAAAAAAAAAAAAAAAAAA=='
 
@@ -149,23 +135,23 @@ class ServerHandler(object):
 		return command
 
 
-#======CMD_GET_URLLIST
+#======CMD_GET_URLLIST, working
 	def cmd_get_urllist(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_SVRLIST
+#======CMD_GET_SVRLIST, working
 	def cmd_get_srvlist(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_SVRTIME
+#======CMD_GET_SVRTIME, working
 	def cmd_get_srvtime(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		command['data']['date'] = int(time.time())
 		return command
 
-#======CMD_AUTH_STEAMTICKET
+#======CMD_AUTH_STEAMTICKET, working only with proxy, probably need a workaround if servers are down
 	def cmd_auth_ticket(self, client_request, client_ip):
 		# initial auth, just send ticket to konami to get steam_id back
 		from .client_proxy import ClientProxy
@@ -195,7 +181,7 @@ class ServerHandler(object):
 		return decoded_kon_resp
 
 
-#======CMD_REQAUTH_HTTPS
+#======CMD_REQAUTH_HTTPS, working
 	def cmd_reqauth(self, client_request):
 		data = client_request['data']
 		self._logger.log_event('Looking for steam_id {}'.format(data['user_name']))
@@ -220,7 +206,7 @@ class ServerHandler(object):
 			command['data']['smart_device_id'] = player[0][4]
 		return command
 
-#======CMD_SEND_IPANDPORT
+#======CMD_SEND_IPANDPORT, working, maybe we should save client's ip for pvp
 	def cmd_send_ipandport(self, client_request):
 		data = client_request['data']
 		sql = 'update players set ex_ip=%s,\
@@ -236,7 +222,7 @@ class ServerHandler(object):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_PLAYERLIST
+#======CMD_GET_PLAYERLIST, working, what is that 'index' for?
 	def cmd_get_playerlist(self, client_request):
 		sql = 'select espionage_lose, espionage_win, fob_grade, fob_point,\
 			fob_rank, is_insurance, league_grade, league_rank, \
@@ -261,7 +247,7 @@ class ServerHandler(object):
 		command['data']['player_num'] =  1
 		return command
 
-#======CMD_SET_CURRENTPLAYER
+#======CMD_SET_CURRENTPLAYER, working, what is that 'player_id'?
 	def cmd_set_currentplayer(self, client_request):
 		sql = 'select id from players WHERE session_id = %s'
 		values = (client_request['session_key'],)
@@ -270,7 +256,7 @@ class ServerHandler(object):
 		command['data']['player_id'] = data[0]
 		return command
 
-#======CMD_GET_ABOLITION_COUNT
+#======CMD_GET_ABOLITION_COUNT, working, what is that 'status'?
 	def cmd_get_abolition_count(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		d = command['data']
@@ -281,17 +267,27 @@ class ServerHandler(object):
 		d['status'] = 0
 		return command
 
-#======CMD_GET_CHALLENGE_TASK_REWARDS
+#======CMD_GET_CHALLENGE_TASK_REWARDS, working
 	def cmd_get_challenge_task_rewards(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
-		# TODO: user-defined variables from mysql
 		from .vars import task_list
 		d = command['data']
 		d['task_list'] = task_list.task_list
 		d['task_count'] = len(task_list.task_list)
 		return command
 
-#======CMD_GET_LOGIN_PARAM
+#======CMD_GET_LOGIN_PARAM, working, need a nice function that will compose login params
+# login params include:
+# -cost of fob platforms
+# -your fob event ponts
+# -threshold for hero _and not hero_ status (150000 and 100000, what does it mean)
+# -list of fob event tasks
+# -can you buy fob4 (why exactly 4?)
+# -online challenge tasks - ones for singleplayer missions
+# -is_stuck_rescue - ?
+# -weapon development requrements that overwrite local values
+# -names and descriptions for all fob events
+# -amount of esp point bonuses (not quite sure) for using staff members
 	def cmd_get_login_param(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		from .vars import login_params
@@ -300,30 +296,28 @@ class ServerHandler(object):
 			d[key] = login_params.login_params[key]
 		return command
 
-#======CMD_GET_COMBAT_DEPLOY_RESULT
+#======CMD_GET_COMBAT_DEPLOY_RESULT, working using dummy data
 	def cmd_get_combat_deploy_result(self, client_request):
 		# TODO: need to get an example of successful combat deployment
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_SERVER_ITEM_LIST_
+#======CMD_GET_SERVER_ITEM_LIST, working with dummy data
 	def cmd_get_server_item_list(self, client_request):
-		# list of returned items depends on client development rate
-		# ie client has development rank of 5 - we return items for ranks 1-5
-		# this logic is probably depedent on vars in weapon-related luas which is not covered in emulator
+		# this is a list of items that client can develop or developed already
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		from .vars import server_items
 		command['data']['item_list'] = copy.deepcopy(server_items.item_list)
 		command['data']['item_num'] = len(command['data']['item_list'])
 		return command
 
-#======CMD_SYNC_RESOURCE
+#======CMD_SYNC_RESOURCE, working using dummy data
 	def cmd_sync_resource(self, client_request):
 		# TODO: figure out parameters sent by client and what should we send back
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_SYNC_SOLDIER_BIN
+#======CMD_SYNC_SOLDIER_BIN, working, maybe we should save that data in db?
 	def cmd_sync_soldier_bin(self, client_request):
 		# essentially, this command does nothing for client
 		# if server sends data that differs from client data, client will lose soldiers that were modified
@@ -380,13 +374,12 @@ class ServerHandler(object):
 	#	command['session_key'] = -1
 		return command
 
-#======CMD_SEND_BOOT_
+#======CMD_SEND_BOOT, working
 	def cmd_send_boot(self, client_request):
-		# ok 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_INFORMATIONLIST
+#======CMD_GET_INFORMATIONLIST, working using dummy data
 	def cmd_get_informationlist(self, client_request):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		from .vars import infolist
@@ -394,7 +387,7 @@ class ServerHandler(object):
 		command['data']['info_num'] = len(command['data']['info_list'])
 		return command
 
-#======CMD_SYNC_MOTHER_BASE
+#======CMD_SYNC_MOTHER_BASE, working, needs parsing
 	def cmd_sync_mother_base(self, client_request):
 		# TODO: just saving data, probably will need to parse and insert in properly
 		# json columns are not supported in my version of mysql
@@ -404,7 +397,7 @@ class ServerHandler(object):
 		sql = 'update player_vars set mother_base_num=%s where player_id=%s'
 		values = (client_request['data']['mother_base_num'], player['id'])
 		self._db.execute_query(sql, values)
-		# removing unneeded keys, list of keys:
+		# removing unneeded keys, list of important keys:
 		# equip_flag
 		# equip_grade
 		# flag
@@ -425,59 +418,62 @@ class ServerHandler(object):
 		data = client_request['data']
 		data.pop('msgid')
 		sql = 'update player_vars set sync_mother_base=%s where player_id=%s'
-		values = (str(data),player['id'])
+		values = (str(data), player['id'])
 		self._db.execute_query(sql, values)
 		return command
 
-#======CMD_GET_FOB_STATUS
+#======CMD_GET_FOB_STATUS, working with dummy data
 	def cmd_get_fob_status(self, client_request):
 		# TODO: db integration
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_ONLINE_PRISON_LIST
+#======CMD_GET_ONLINE_PRISON_LIST, working with dummy data
 	def cmd_get_online_prison_list(self, client_request):
 		# TODO: get a successful response from server
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_OWN_FOB_LIST
+#======CMD_GET_OWN_FOB_LIST, working with dummy data
 	def cmd_get_own_fob_list(self, client_request):
 		# TODO: db integration 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_MINING_RESOURCE
+#======CMD_MINING_RESOURCE, working with dummy data
 	def cmd_mining_resource(self, client_request):
 		# TODO: db integration 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_UPDATE_SESSION
+#======CMD_UPDATE_SESSION, working
 	def cmd_update_session(self, client_request):
 		# TODO: seems ok, check different status flags 
+		# flags:
+		# -fob_index - always -1 in my netdumps
+		# -sneak_mode - always -1 in my netdumps
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_CHALLENGE_TASK_TARGET_VALUES
+#======CMD_GET_CHALLENGE_TASK_TARGET_VALUES, working with dummy data
 	def cmd_get_challenge_task_target_values(self, client_request):
 		# TODO: db integration
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_FOB_NOTICE
+#======CMD_GET_FOB_NOTICE, working with dummy data
 	def cmd_get_fob_notice(self, client_request):
 		# TODO: tight db integration 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_SEND_MISSION_RESULT
+#======CMD_SEND_MISSION_RESULT, working
 	def cmd_send_mission_result(self, client_request):
 		# TODO: do we really need to save that data? 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_DAILY_REWARD
+#======CMD_GET_DAILY_REWARD, working
 	def cmd_get_daily_reward(self, client_request):
 		# TODO: figure out personell
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
@@ -536,16 +532,15 @@ class ServerHandler(object):
 		return {'id':reward_id, 'amount':reward_amount, 'is_online':reward_is_online}
 
 
-#======CMD_GET_FOB_REWARD_LIST_
+#======CMD_GET_FOB_REWARD_LIST, working with dummy data
 	def cmd_get_fob_reward_list(self, client_request):
 		# TODO: figure out fob reward format
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		command['data']['version'] = client_request['data']['version'] + 1
 		return command
 
-#======CMD_GET_PLAYER_PLATFORM_LIST
+#======CMD_GET_PLAYER_PLATFORM_LIST, untested
 	def cmd_get_player_platform_list(self, client_request):
-	#untested
 		sql = 'select mother_base_num from player_vars where player_id=%s'
 		values = (str(self._player['id']),)
 		mb_num = self._db.fetch_query(sql, values)[0][0]
@@ -557,9 +552,8 @@ class ServerHandler(object):
 		command['data']['info_num'] = len(command['data']['info_list'])
 		return command
 
-#======CMD_SYNC_LOADOUT
+#======CMD_SYNC_LOADOUT, untested
 	def cmd_sync_loadout(self, client_request):
-	#untested
 		# do we need to save loadout for some reason or is it just for checks? 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
