@@ -49,6 +49,10 @@ class ServerHandler(object):
 			"CMD_GET_FOB_REWARD_LIST": self.cmd_get_fob_reward_list,
 			"CMD_GET_PLAYER_PLATFORM_LIST": self.cmd_get_player_platform_list,
 			"CMD_SYNC_LOADOUT": self.cmd_sync_loadout,
+			"CMD_ABORT_MOTHER_BASE": self.cmd_abort_mother_base,
+			"CMD_GET_RESOURCE_PARAM": self.cmd_get_resource_param,
+			"CMD_GET_SERVER_ITEM": self.cmd_get_server_item,
+			"CMD_SALE_RESOURCE": self.cmd_sale_resource,
 		}
 		self._db = Database()
 		self._db.connect()
@@ -348,6 +352,9 @@ class ServerHandler(object):
 			#	soldier_count +=1
 			if binascii.hexlify(soldiers[n]) != b'0'*32:
 				soldier_count +=1
+				#TEST
+				#self._logger.log_event(binascii.hexlify(soldiers[n]))
+				#END TEST
 			soldiers_out = b''.join(soldiers)
 		command['data']['soldier_param'] = base64.encodestring(soldiers_out).decode().replace('\n','')
 		command['data']['soldier_num'] = soldier_count
@@ -556,5 +563,31 @@ class ServerHandler(object):
 	def cmd_sync_loadout(self, client_request):
 		# do we need to save loadout for some reason or is it just for checks? 
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_ABORT_MOTHER_BASE, works
+	def cmd_abort_mother_base(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_RESOURCE_PARAM, working with dummy data
+	def cmd_get_resource_param(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_SERVER_ITEM, works with dummy data 
+	def cmd_get_server_item(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command['data']['item']['id'] = client_request['data']['item_id']
+		return command
+
+#======CMD_SALE_RESOURCE, works with dummy data, needs mysql pulls
+	def cmd_sale_resource(self, client_request):
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command['data']['resouce_id'] = client_request['data']['resouce_id']
+		current_online_gmp = 1000000
+		current_resource_amount = 1000000
+		command['data']['result_gmp'] = current_online_gmp + client_request['data']['num'] * client_request['data']['unit_price']
+		command['data']['result_num'] = current_resource_amount - client_request['data']['num']
 		return command
 
