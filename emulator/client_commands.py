@@ -78,7 +78,8 @@ urls = {
 		"CMD_EXCHANGE_LEAGUE_POINT2",
 		"CMD_ADD_FOLLOW",
 		"CMD_DELETE_FOLLOW",
-		"CMD_SYNC_EMBLEM"
+		"CMD_SYNC_EMBLEM",
+		"CMD_GET_WORMHOLE_LIST",
 	]
 }
 
@@ -136,7 +137,6 @@ not_implemented = [
 	"CMD_GET_SNEAK_TARGET_LIST",
 	"CMD_GET_STEAM_SHOP_ITEM_LIST",
 	"CMD_GET_TROOPS_LIST",
-	"CMD_GET_WORMHOLE_LIST",
 	"CMD_NOTICE_SNEAK_MOTHER_BASE",
 	"CMD_OPEN_STEAM_SHOP",
 	"CMD_PURCHASE_FIRST_FOB",
@@ -1252,6 +1252,20 @@ commlist = [
 			"original_size": 0,
 			"session_crypto": True,
 			"session_key": -1
+		}
+	},
+
+	{
+		"CMD_GET_WORMHOLE_LIST": {
+			'compress': False,
+			'original_size': 0,
+			'data': {
+				'flag': 'BLACK',	# possible value - FRIENDLY
+				'msgid': 'CMD_GET_WORMHOLE_LIST',
+				'rqid': 0
+			},
+			'session_key': -1,
+			'session_crypto': True
 		}
 	}
 ]

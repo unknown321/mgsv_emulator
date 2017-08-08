@@ -53,6 +53,8 @@ class ServerHandler(object):
 			"CMD_GET_RESOURCE_PARAM": self.cmd_get_resource_param,
 			"CMD_GET_SERVER_ITEM": self.cmd_get_server_item,
 			"CMD_SALE_RESOURCE": self.cmd_sale_resource,
+			"CMD_GET_WORMHOLE_LIST": self.cmd_get_wormhole_list,
+			"CMD_GET_FOB_TARGET_LIST": self.cmd_get_fob_target_list, 
 		}
 		self._db = Database()
 		self._db.connect()
@@ -191,7 +193,7 @@ class ServerHandler(object):
 		self._logger.log_event('Looking for steam_id {}'.format(data['user_name']))
 		player = self._db.player_find_by_steam_id(data['user_name'])
 		if len(player) != 1:
-			self._logger.log_event('Looking for steam_id {}, {} found!'.format(data['user_name'], len(player)))
+			self._logger.log_event('Looking for steam_id {}, {} found! This is not supposed to happen!'.format(data['user_name'], len(player)))
 		else:
 			# generate session id and crypto_key
 			session_id = self._generate_session_id()
@@ -521,10 +523,10 @@ class ServerHandler(object):
 			'online_ids':[1],
 			'offline_ids':[33]
 			}
-		# mb coins = 26/58
-		# esp score 30/62
-		# liquid carb missilies 31/63 
-		# volgas 28/60 
+		# mb coins id: 26/58
+		# esp score id: 30/62
+		# liquid carb missilies id: 31/63 
+		# volga id: 28/60 
 
 		rewards = [cars, flowers, resources, soldiers, gmp]
 		import random
@@ -591,3 +593,29 @@ class ServerHandler(object):
 		command['data']['result_num'] = current_resource_amount - client_request['data']['num']
 		return command
 
+#======CMD_GET_WORMHOLE_LIST, dummy
+	def cmd_get_wormhole_list(self, client_request):
+		from .client_proxy import ClientProxy
+		proxy = ClientProxy()
+		command = proxy.send_full_command_with_auth(client_request, 'CMD_GET_WORMHOLE_LIST')
+#		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command
+
+#======CMD_GET_FOB_TARGET_LIST, dummy
+	def cmd_get_fob_target_list(self, client_request):
+		#types:
+		#PICKUP - inf targets same grade
+		#PICKUP_HIGH - inf targets high grade
+		#ENEMY - retaliation targets
+		#FR_ENEMY - indirect retaliation
+		#TRIAL - training
+		#EVENT - fob event
+		#INJURY - intruders
+		#CHALLENGE - security challenge
+		#DEPLOYED - fob unit deployed
+		from .client_proxy import ClientProxy
+		proxy = ClientProxy()
+		command = proxy.send_full_command_with_auth(client_request, 'CMD_GET_FOB_TARGET_LIST')
+		self._logger.log_event('DUMPONG KONAMI RESP!!')
+#		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		return command

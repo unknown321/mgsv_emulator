@@ -42,15 +42,28 @@ class Client(object):
 			if 'crypto_key' in text['data']:
 				self.__encoder__.__init_session_blowfish__( bytearray( base64.decodestring(text['data']['crypto_key'].encode() ) ) )
 
-	def send_command(self, command):
+	def __append_command_options__(self, command, options):
+		# TODO: make a proper update function
+		# this will overwrite any values in data section, incuding dicts which is really bad
+		# https://stackoverflow.com/a/3233356/1938027
+		self._logger.log_event('Applying user-supplied options to command {}:\n{}'.format(str(command['data']['msgid']), str(options)))
+		for key in options:
+			if key in command['data']:
+				self._logger.log_event('Overwriting key {} in command {}'.format(str(key), str(command['data']['msgid'])))
+				command['data'][key] = options[key]
+		self._logger.log_event('Applied options to command {}: {}'.format(str(command['data']['msgid']), str(command)))
+
+	def send_command(self, command, options=None):
 		httpclient = HttpClient()
 		comm = self.__command_get__(command)
 		self.__append_session_key__(comm)
+		if options:
+			self.__append_command_options__(comm, options)
 		encrypted_request = self.__encoder__.encode(comm)
 		for url in urls:
 			if 'tpp'+self.__platform__ in url:
 				if command in urls[url]:
-					#print(command, url)
+					self._logger.log_event("Sending client command {}: {}". format(command, str(comm)))
 					r = httpclient.send(encrypted_request, url)
 					return self.__parse_response__(r)
 
@@ -65,7 +78,7 @@ class Client(object):
 		return text
 
 
-	def login(self):
+	def login(self, steam_id=None, magic_hash=None):
 		responses = []
 		commands = [
 			'CMD_GET_URLLIST',
@@ -80,7 +93,12 @@ class Client(object):
 			commands.append('CMD_REQAUTH_HTTPS')
 
 		for i in commands:
-			responses.append(self.send_command(i))
+			if i == 'CMD_REQAUTH_HTTPS' and steam_id and magic_hash:
+				options = {"user_name": steam_id, "hash": magic_hash}
+				response = self.send_command(i, options)
+			else:
+				response = self.send_command(i)
+			responses.append(response)
 		return responses
 
 

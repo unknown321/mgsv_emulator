@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 from mgsv_emulator.emulator.httpclient import HttpClient
-from .client_commands import urls
+from .client_commands import urls as server_urls
 from datetime import datetime
+from database import Database
 from .logger import Logger
 
 from .client import Client
@@ -14,46 +15,52 @@ from .client import Client
 class ClientProxy(object):
 	"""proxy that takes client requests and sends them to konami servers"""
 	def __init__(self, crypto_key=None):
-		pass
-		# self._client = Client()
+#		pass
+		self._client = Client()
 		# you will probably need to add session id to make requests after authentication
-		# if crypto_key:
-		#	self._client.__encoder__.__init_session_blowfish__( bytearray( base64.decodestring(crypto_key.encode()) ) )
+		if crypto_key:
+			self._client.__encoder__.__init_session_blowfish__( bytearray( base64.decodestring(crypto_key.encode()) ) )
 		self._logger = Logger()
+		self._db = Database()
+		self._db.connect()
+
 
 	def send_full_command(self, command, command_name):
 		# just take whole command and send it to konami
 		# this exact command will work only for CMDs before authentication
 		httpclient = HttpClient()
-		r = None
-		for url in urls:
-			if command_name in urls[url]:
-				r = httpclient.send(command, url)
-				self._logger.log_event("Proxying command {}, status {}".format(str(command_name), str(r.status_code)))
-		if r:
-			return r.text
+		response = None
+		command_found = False
+		for url in server_urls:
+			if command_name in server_urls[url]:
+				command_found = True
+				response = httpclient.send(command, url)
+				self._logger.log_event("Proxying command {}, url {}, status {}".format(str(command_name), str(url), str(response.status_code)))
 		else:
-			return r
+			if not command_found:
+				self._logger.log_event("Proxifying command {} failed, command not found in client_commands!".format(str(command_name)))
+		if response:
+			return response.text
+		else:
+			return response
 
 	def send_full_command_with_auth(self, command, command_name):
 		# TODO:  
 		# find user in database by his session key
 		# use his steamid and password in Client constructor
 		# current behaviour - steamid and passwd are pulled from settings
-		c = Client()
-		c.login()
-		command['session_key'] = c.__session_key__
-		encrypted_request = c.__encoder__.encode(command)
+		self._logger.log_event("Got a command for proxying: {}".format(str(command)))
+		orig_session_key = command['session_key']
 
-		httpclient = HttpClient()
-		r = None
-		for url in urls:
-			if command_name in urls[url]:
-				r = httpclient.send(encrypted_request, url)
-				self._logger.log_event("Proxying command {}, status {}".format(str(command_name), str(r.status_code)))
-		if r:
-			ans =  c.__response_decode__(r)
-			return ans
+		player = self._db.player_find_by_session_id(orig_session_key, True)
+		if player:
+			proxy_c = Client()
+			proxy_c.login(steam_id = player['steam_id'], magic_hash=player['magic_hash'])
+			command['session_key'] = proxy_c.__session_key__
+			response = proxy_c.send_command(command_name, options = command['data'])
+			self._logger.log_event("Proxying command {},  response:\n {}".format(str(command_name), str(response)))
+			response['session_key'] = orig_session_key
 		else:
-			return r
+			self._logger.log_event("Cannot find player during proxy procedure")
+		return response
 
