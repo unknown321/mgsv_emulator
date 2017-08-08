@@ -15,9 +15,7 @@ from .client import Client
 class ClientProxy(object):
 	"""proxy that takes client requests and sends them to konami servers"""
 	def __init__(self, crypto_key=None):
-#		pass
 		self._client = Client()
-		# you will probably need to add session id to make requests after authentication
 		if crypto_key:
 			self._client.__encoder__.__init_session_blowfish__( bytearray( base64.decodestring(crypto_key.encode()) ) )
 		self._logger = Logger()
@@ -45,22 +43,17 @@ class ClientProxy(object):
 			return response
 
 	def send_full_command_with_auth(self, command, command_name):
-		# TODO:  
-		# find user in database by his session key
-		# use his steamid and password in Client constructor
-		# current behaviour - steamid and passwd are pulled from settings
 		self._logger.log_event("Got a command for proxying: {}".format(str(command)))
 		orig_session_key = command['session_key']
 
 		player = self._db.player_find_by_session_id(orig_session_key, True)
+		response = None
 		if player:
-			proxy_c = Client()
-			proxy_c.login(steam_id = player['steam_id'], magic_hash=player['magic_hash'])
-			command['session_key'] = proxy_c.__session_key__
-			response = proxy_c.send_command(command_name, options = command['data'])
+			self._client.login(steam_id = player['steam_id'], magic_hash=player['magic_hash'])
+			command['session_key'] = self._client.__session_key__
+			response = self._client.send_command(command_name, options = command['data'])
 			self._logger.log_event("Proxying command {},  response:\n {}".format(str(command_name), str(response)))
 			response['session_key'] = orig_session_key
 		else:
 			self._logger.log_event("Cannot find player during proxy procedure")
 		return response
-
