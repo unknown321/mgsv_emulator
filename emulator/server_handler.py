@@ -7,6 +7,7 @@ from database import Database
 from datetime import datetime
 import time
 import copy
+from .client_proxy import ClientProxy
 from .server_commands import server_commands
 from .logger import Logger
 
@@ -593,12 +594,9 @@ class ServerHandler(object):
 		command['data']['result_num'] = current_resource_amount - client_request['data']['num']
 		return command
 
-#======CMD_GET_WORMHOLE_LIST, dummy
+#======CMD_GET_WORMHOLE_LIST, works 
 	def cmd_get_wormhole_list(self, client_request):
-		from .client_proxy import ClientProxy
-		proxy = ClientProxy()
-		command = proxy.send_full_command_with_auth(client_request, 'CMD_GET_WORMHOLE_LIST')
-#		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
 #======CMD_GET_FOB_TARGET_LIST, dummy
@@ -613,9 +611,11 @@ class ServerHandler(object):
 		#INJURY - intruders
 		#CHALLENGE - security challenge
 		#DEPLOYED - fob unit deployed
-		from .client_proxy import ClientProxy
-		proxy = ClientProxy()
-		command = proxy.send_full_command_with_auth(client_request, 'CMD_GET_FOB_TARGET_LIST')
-		self._logger.log_event('DUMPONG KONAMI RESP!!')
-#		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+#		proxy = ClientProxy()
+#		command = proxy.send_full_command_with_auth(client_request, 'CMD_GET_FOB_TARGET_LIST')
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		from .vars import get_fob_target_list
+		command['data']['type'] = client_request['data']['type']
+		command['data']['target_list'].append(get_fob_target_list.enemy)
+		command['data']['target_num'] = len(command['data']['target_list'])
 		return command
