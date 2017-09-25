@@ -31,43 +31,44 @@ enemy = {
 		{
 			'area_id': 0,
 			'cluster_param': [],
-			'construct_param': 130394987,
-			'fob_index': 0,
+			'construct_param': 59088936,
+			#130394987,   # includes fob position on the globe, format unknown
+			'fob_index': 0,			# doesn't seem to affect anything
 			'mother_base_id': 1,
 			'platform_count': 28,
-			'price': 0,
-			'security_rank': 57
-		},
-		{
-			'area_id': 0,
-			'cluster_param': [],
-			'construct_param': 184920939,
-			'fob_index': 1,
-			'mother_base_id': 2,
-			'platform_count': 28,
-			'price': 0,
-			'security_rank': 57
-		}, 
-		{
-			'area_id': 0,
-			'cluster_param': [],
-			'construct_param': 147172177,
-			'fob_index': 2,
-			'mother_base_id': 3,
-			'platform_count': 28,
-			'price': 0,
-			'security_rank': 57
-		}, 
-		{
-			'area_id': 0,
-			'cluster_param': [],
-			'construct_param': 105024337,
-			'fob_index': 3,
-			'mother_base_id': 4,
-			'platform_count': 28,
-			'price': 0,
+			'price': 0,			# doesn't appear on ui anywhere
 			'security_rank': 57
 		}
+#		{
+#			'area_id': 0,
+#			'cluster_param': [],
+#			'construct_param': 130394987, #184920939,
+#			'fob_index': 1,
+#			'mother_base_id': 2,
+#			'platform_count': 28,
+#			'price': 0,
+#			'security_rank': 57
+#		}, 
+#		{
+#			'area_id': 0,
+#			'cluster_param': [],
+#			'construct_param': 130394987,# 147172177,
+#			'fob_index': 2,
+#			'mother_base_id': 3,
+#			'platform_count': 28,
+#			'price': 0,
+#			'security_rank': 57
+#		}, 
+#		{
+#			'area_id': 0,
+#			'cluster_param': [],
+#			'construct_param': 130394987,#105024337,
+#			'fob_index': 3,
+#			'mother_base_id': 4,
+#			'platform_count': 28,
+#			'price': 0,
+#			'security_rank': 57
+#		}
 	],
 	'owner_detail_record': {
 		'emblem': {

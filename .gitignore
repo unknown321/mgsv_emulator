@@ -1,0 +1,6 @@
+__pycache__
+test.py
+emulator/settings.py
+emulator/server_commands.py
+*.swp
+*.pyc

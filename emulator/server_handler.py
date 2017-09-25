@@ -55,7 +55,9 @@ class ServerHandler(object):
 			"CMD_GET_SERVER_ITEM": self.cmd_get_server_item,
 			"CMD_SALE_RESOURCE": self.cmd_sale_resource,
 			"CMD_GET_WORMHOLE_LIST": self.cmd_get_wormhole_list,
-			"CMD_GET_FOB_TARGET_LIST": self.cmd_get_fob_target_list, 
+			"CMD_GET_FOB_TARGET_LIST": self.cmd_get_fob_target_list,
+			"CMD_GET_FOB_TARGET_DETAIL": self.cmd_get_fob_target_detail,
+			"CMD_SNEAK_MOTHER_BASE": self.cmd_sneak_mother_base
 		}
 		self._db = Database()
 		self._db.connect()
@@ -130,7 +132,8 @@ class ServerHandler(object):
 		return 1
 
 	def _generate_crypto_key(self):
-		return 'AAAAAAAAAAAAAAAAAAAAAA=='
+		# return 'AAAAAAAAAAAAAAAAAAAAAA'
+		return 'AQIDBAX///8BAgMEBf///w==' # 0102030405FFFFFF0102030405FFFFFF
 
 	def _generate_session_id(self):
 		from hashlib import md5
@@ -397,38 +400,18 @@ class ServerHandler(object):
 		command['data']['info_num'] = len(command['data']['info_list'])
 		return command
 
-#======CMD_SYNC_MOTHER_BASE, working, needs parsing
+#======CMD_SYNC_MOTHER_BASE, working
 	def cmd_sync_mother_base(self, client_request):
-		# TODO: just saving data, probably will need to parse and insert in properly
-		# json columns are not supported in my version of mysql
-		# still possible to save as plain text and json.loads it
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		player = self._db.player_find_by_session_id(client_request['session_key'], get_dict=True)
-		sql = 'update player_vars set mother_base_num=%s where player_id=%s'
-		values = (client_request['data']['mother_base_num'], player['id'])
-		self._db.execute_query(sql, values)
-		# removing unneeded keys, list of important keys:
-		# equip_flag
-		# equip_grade
-		# flag
-		# invalid_fob
-		# local_base_param
-		# local_base_time
-		# mother_base_num
-		# mother_base_param
-		# msgid
-		# name_plate_id
-		# pf_skill_staff
-		# pickup_open
-		# rqid
-		# section_open
-		# security_level
-		# tape_flag
-		# version
+		#select mother_base_data->'$.data.mother_base_param[0].cluster_param[0].unique_security.caution_area' from player_vars;
 		data = client_request['data']
-		data.pop('msgid')
-		sql = 'update player_vars set sync_mother_base=%s where player_id=%s'
-		values = (str(data), player['id'])
+		sql = 'insert into player_vars(player_id, mother_base_data) values(1, %s)'
+		values = (
+			json.dumps(j),
+			player['id']
+		)
+		self.execute_query(sql,values)
 		self._db.execute_query(sql, values)
 		return command
 
@@ -599,7 +582,7 @@ class ServerHandler(object):
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command
 
-#======CMD_GET_FOB_TARGET_LIST, dummy
+#======CMD_GET_FOB_TARGET_LIST, somewhat works, maybe add a fob generator?
 	def cmd_get_fob_target_list(self, client_request):
 		#types:
 		#PICKUP - inf targets same grade
@@ -613,9 +596,66 @@ class ServerHandler(object):
 		#DEPLOYED - fob unit deployed
 #		proxy = ClientProxy()
 #		command = proxy.send_full_command_with_auth(client_request, 'CMD_GET_FOB_TARGET_LIST')
+#		f = open('/var/www/mgsv_server/wsgi-scripts/fobstuff','a')
+#		f.write(str(command) + '\n')
+#		f.close()
+
 		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		from .vars import get_fob_target_list
 		command['data']['type'] = client_request['data']['type']
-		command['data']['target_list'].append(get_fob_target_list.enemy)
+
+#		t =	{
+#			'area_id': 0,
+#			'cluster_param': [],
+#			'construct_param': 59072651,
+#			#130394987,   # includes fob position on the globe, format unknown
+#			'fob_index': 0,			# doesn't seem to affect anything
+#			'mother_base_id': 1,
+#			'platform_count': 28,
+#			'price': 0,			# doesn't appear on ui anywhere
+#			'security_rank': 57
+#		}
+#		q = open('/tmp/i','r')
+#		i = int(q.read())
+#		i = 5
+#		magicstring = '0x03' + hex(i)[2:] + '0028'
+#		t['construct_param'] = int(magicstring,0)
+		a = copy.deepcopy(get_fob_target_list.enemy)
+#		a['mother_base_param'] = []
+#		a['mother_base_param'].append(t)
+#		a['owner_fob_record']['staff_count'] = [i,0,0,0,0,0,0,0,0,0]
+#		a['owner_detail_record']['staff_count'] = i
+		command['data']['target_list'].append(a)
+#		t['construct_param'] = 59047976 
+#		self._logger.log_event('adding ' + str(t['construct_param']) + ": " + str(i) + " " + magicstring )
+#		q.close()
+#		q = open('/tmp/i','w')
+#		q.write(str(i+1))
+#		q.close()
+
 		command['data']['target_num'] = len(command['data']['target_list'])
+		return command
+
+#======CMD_GET_FOB_TARGET_DETAIL
+	def cmd_get_fob_target_detail(self, client_request):
+#		proxy = ClientProxy()
+#		command = proxy.send_full_command_with_auth(client_request,'CMD_GET_FOB_TARGET_DETAIL')
+#		f = open('/var/www/mgsv_server/wsgi-scripts/fobstuff','a')
+#		f.write(str(command) + '\n')
+#		f.close()
+
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
+		from .vars import fob_details
+		command['data']['detail'] = fob_details.details
+		return command
+
+#======CMD_SNEAK_MOTHER_BASE
+	def cmd_sneak_mother_base(self, client_request):
+#		proxy = ClientProxy()
+#		command = proxy.send_full_command_with_auth(client_request,'CMD_GET_FOB_TARGET_DETAIL')
+#		f = open('/var/www/mgsv_server/wsgi-scripts/fobstuff','a')
+#		f.write(str(command) + '\n')
+#		f.close()
+
+		command = copy.deepcopy(self._command_get(str(client_request['data']['msgid'])))
 		return command

@@ -50,8 +50,12 @@ class Server(object):
 				command = handler.process_message(request, client_ip)
 			else:
 				command = handler.process_message(request, client_ip, httpMsg)
-
-		return self._encoder.encode(command)
+			self._logger.log_event('Returning {}'.format(msgid))
+		response = self._encoder.encode(command)
+		# debug, remove
+#		if msgid == 'CMD_SNEAK_MOTHER_BASE':
+#			self._logger.log_event(response)
+		return response
 
 
 	# def __log__(self, data):
