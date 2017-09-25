@@ -3,6 +3,10 @@ mgsv client/server emulator
 
 Types of encryption implemented: COMMON, COMPOUND.
 
+# Requirements
+
+Python 3, Percona Server 5.7 (or some alternative with json support), Apache 2 + mod_wsgi or something that can handle python wsgi scripts
+
 # Encryption details
 Every message between server and client is encrypted using blowfish algorythm.
 Unfortunately it slightly differs from realisation provided here (https://www.schneier.com/academic/blowfish/download.html), so I had to rewrite it from scratch.
