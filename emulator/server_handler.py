@@ -68,6 +68,7 @@ class ServerHandler(object):
 		return server_commands[name]
 
 	def process_message(self, client_request, client_ip, httpMsg=None):
+		# TODO: move deepcopy part here and send it to the handler function
 		msgid = client_request['data']['msgid']
 		self._logger.log_event(_text=msgid)
 		command = None
