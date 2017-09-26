@@ -136,11 +136,13 @@ class ServerHandler(object):
 		return 'AQIDBAX///8BAgMEBf///w==' # 0102030405FFFFFF0102030405FFFFFF
 
 	def _generate_session_id(self):
+		# TODO salt
 		from hashlib import md5
 		t = datetime.timestamp(datetime.now())
 		return md5(str(t).encode()).hexdigest()
 
 	def cmd_generic_error(self):
+		# TODO what
 		command = copy.deepcopy(self._command_get('CMD_GET_SVRTIME'))
 		return command
 
@@ -174,7 +176,7 @@ class ServerHandler(object):
 			decoder = Decoder()
 			decoded_kon_resp = decoder.decode(proxied_response)
 
-			self._logger.log_event('konami resp: ' + str(decoded_kon_resp))
+			self._logger.log_event('Konami response: {}'.format(decoded_kon_resp))
 
 			data = decoded_kon_resp['data']
 			player = self._db.player_find_by_steam_id(data['account_id'])
@@ -187,9 +189,8 @@ class ServerHandler(object):
 				self._populate_player_default_values(player_id, data['account_id'])
 
 		else:
-			self._logger.log_event('konami returned none?')
+			self._logger.log_event('Konami returned none')
 		return decoded_kon_resp
-
 
 #======CMD_REQAUTH_HTTPS, working
 	def cmd_reqauth(self, client_request):
@@ -198,6 +199,7 @@ class ServerHandler(object):
 		player = self._db.player_find_by_steam_id(data['user_name'])
 		if len(player) != 1:
 			self._logger.log_event('Looking for steam_id {}, {} found! This is not supposed to happen!'.format(data['user_name'], len(player)))
+			command = None
 		else:
 			# generate session id and crypto_key
 			session_id = self._generate_session_id()

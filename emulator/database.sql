@@ -25,6 +25,23 @@ create table if not exists players(
 create table if not exists player_vars(
 	id int not null auto_increment,
 	player_id int not null,
+
+
+	espionage_lose int, -- CMD_GET_PLAYERLIST
+	espionage_win int,
+	fob_grade int, 
+	fob_point int, 
+	fob_rank int, 
+	is_insurance int,
+	league_grade int,
+	league_rank int,
+	name varchar(50),
+	playtime int, 
+	point int,
+	player_num int, -- always 1
+	-- data from sync_mother_base:
+	mother_base_num int,
+
 	mother_base_data json,
 	primary key(id),
 	foreign key(player_id) references players(id) on delete cascade
