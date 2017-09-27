@@ -4,31 +4,32 @@ use mgsv_server;
 
 
 
---defines parameters of a single FOB, mother_base_param in mother_base_sync command
-create table if not exists cluster(
+-- defines parameters of a single FOB, mother_base_param in mother_base_sync command
+create table if not exists fob_cluster(
 	id int NOT NULL AUTO_INCREMENT,
-	area_id int DEFAULT 0, --always 0 for my fobs
-	construct_param int, --color, location etc
-	fob_index int, --always 0 for my fobs
-	mother_base_id int, --always 0 for my fobs
-	platform_count int, --total amount of built platforms, 28 max
-	price int, --always 0 for my completely finished fobs
-	security_rank int, --security rank level
+	area_id int DEFAULT 0, -- always 0 for my fobs
+	construct_param int, -- color, location etc
+	fob_index int, -- always 0 for my fobs
+	mother_base_id int, -- always 0 for my fobs
+	platform_count int, -- total amount of built platforms, 28 max
+	price int, -- always 0 for my completely finished fobs
+	security_rank int, -- security rank level
+	PRIMARY KEY(id)
 );
 
 create table if not exists cluster_params(
 	id int NOT NULL AUTO_INCREMENT,
 	cluster_id int NOT NULL,
-	build int, --unknown param
-	cluster_security int, --defines security zones I guess or something like that, hash value like construct_params
+	build int, -- unknown param
+	cluster_security int, -- defines security zones I guess or something like that, hash value like construct_params
 	PRIMARY KEY(id),
-	FOREIGN KEY(cluster_id) REFERENCES cluster(id) ON DELETE CASCADE
+	FOREIGN KEY(cluster_id) REFERENCES fob_cluster(id) ON DELETE CASCADE
 );
 
 create table if not exists common_security(
 	id int NOT NULL,
 	cluster_params_id int NOT NULL,
-	--params below contain only counts of security stuff
+	-- params below contain only counts of security stuff
     antitheft int,
     camera int,
     caution_area int,
