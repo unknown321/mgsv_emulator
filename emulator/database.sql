@@ -1,7 +1,54 @@
 -- create database mgsv_server;
 use mgsv_server;
+
+
+
+
+--defines parameters of a single FOB, mother_base_param in mother_base_sync command
+create table if not exists cluster(
+	id int NOT NULL AUTO_INCREMENT,
+	area_id int DEFAULT 0, --always 0 for my fobs
+	construct_param int, --color, location etc
+	fob_index int, --always 0 for my fobs
+	mother_base_id int, --always 0 for my fobs
+	platform_count int, --total amount of built platforms, 28 max
+	price int, --always 0 for my completely finished fobs
+	security_rank int, --security rank level
+);
+
+create table if not exists cluster_params(
+	id int NOT NULL AUTO_INCREMENT,
+	cluster_id int NOT NULL,
+	build int, --unknown param
+	cluster_security int, --defines security zones I guess or something like that, hash value like construct_params
+	PRIMARY KEY(id),
+	FOREIGN KEY(cluster_id) REFERENCES cluster(id) ON DELETE CASCADE
+);
+
+create table if not exists common_security(
+	id int NOT NULL,
+	cluster_params_id int NOT NULL,
+	--params below contain only counts of security stuff
+    antitheft int,
+    camera int,
+    caution_area int,
+    decoy int,
+    ir_sensor int,
+    mine int,
+    soldier int,
+    uav int,
+    voluntary_coord_camera_count int,
+    voluntary_coord_mine_count int,
+	PRIMARY KEY(id),
+	FOREIGN KEY(cluster_params_id) REFERENCES cluster_params(id) ON DELETE CASCADE
+);
+
+
+
+
+
 create table if not exists players(
-	id int not null auto_increment,
+	id int NOT NULL AUTO_INCREMENT,
 						-- there is no point in saving steam_ticket since it renews every time
 	steam_id varchar(17), 			-- from server CMD_AUTH_STEAMTICKET, 17-chars steamid
 	currency varchar(4),			-- from server CMD_AUTH_STEAMTICKET, 2-3 letter currency, not sure if it can be 4 letters
@@ -19,12 +66,12 @@ create table if not exists players(
 	in_port varchar(7),
 	nat varchar(48),
 	xnaddr varchar(48), 
-	primary key(id)
+	PRIMARY KEY(id)
 );
 
 create table if not exists player_vars(
-	id int not null auto_increment,
-	player_id int not null,
+	id int NOT NULL AUTO_INCREMENT,
+	player_id int NOT NULL,
 
 
 	espionage_lose int, -- CMD_GET_PLAYERLIST
@@ -43,6 +90,6 @@ create table if not exists player_vars(
 	mother_base_num int,
 
 	mother_base_data json,
-	primary key(id),
-	foreign key(player_id) references players(id) on delete cascade
+	PRIMARY KEY(id),
+	FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
 );
