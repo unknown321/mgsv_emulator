@@ -1,9 +1,6 @@
 -- create database mgsv_server;
 use mgsv_server;
 
-
-
-
 -- defines parameters of a single FOB, mother_base_param in mother_base_sync command
 create table if not exists fob_cluster(
 	id int NOT NULL AUTO_INCREMENT,
@@ -17,15 +14,19 @@ create table if not exists fob_cluster(
 	PRIMARY KEY(id)
 );
 
+-- parameters of cluster security, 4x for one fob
+-- common[1-3]_security and unique_security
 create table if not exists cluster_params(
 	id int NOT NULL AUTO_INCREMENT,
 	cluster_id int NOT NULL,
-	build int, -- unknown param
+	build int, -- unknown param, 16385 for me - some kind of hash or is it the id?
 	cluster_security int, -- defines security zones I guess or something like that, hash value like construct_params
+	soldier_rank int, -- 1-9?
 	PRIMARY KEY(id),
 	FOREIGN KEY(cluster_id) REFERENCES fob_cluster(id) ON DELETE CASCADE
 );
 
+-- describes the _amount_ of security on cluster part
 create table if not exists common_security(
 	id int NOT NULL,
 	cluster_params_id int NOT NULL,
@@ -44,11 +45,25 @@ create table if not exists common_security(
 	FOREIGN KEY(cluster_params_id) REFERENCES cluster_params(id) ON DELETE CASCADE
 );
 
+-- one user can has many player entites
+-- at least this is how it looks from server-client communications with player_id parameters
 
+create table if not exists name_plate(
+	id int NOT NULL,
+	description varchar(100),
+	PRIMARY KEY(id)
+);
 
+-- player parameters, WIP
+create table if not exists player(
+	id int NOT NULL AUTO_INCREMENT,
+	name_plate_id int, 
+	PRIMARY KEY(id),
+	FOREIGN KEY(name_plate_id) REFERENCES name_plate(id)
+);
 
-
-create table if not exists players(
+-- server user, one per steam account
+create table if not exists server_user(
 	id int NOT NULL AUTO_INCREMENT,
 						-- there is no point in saving steam_ticket since it renews every time
 	steam_id varchar(17), 			-- from server CMD_AUTH_STEAMTICKET, 17-chars steamid
