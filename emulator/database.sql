@@ -109,3 +109,20 @@ create table if not exists player_vars(
 	PRIMARY KEY(id),
 	FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
 );
+
+
+-- unused params
+-- sync_mother_base
+--
+---- equip_flag
+---- equip_grade
+---- invalid_fob
+---- local_base_param
+---- local_base_time
+---- mother_base_num
+---- pf_skill_staff
+---- pickup_open
+---- section_open
+---- security_level
+---- tape_flag
+---- version
