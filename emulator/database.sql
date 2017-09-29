@@ -101,6 +101,7 @@ create table if not exists player_vars(
 	name varchar(50),
 	playtime int, 
 	point int,
+	event_point int, 	-- get_login_param
 	player_num int, -- always 1
 	-- data from sync_mother_base:
 	mother_base_num int,
@@ -110,9 +111,138 @@ create table if not exists player_vars(
 	FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
 );
 
+create table if not exists server_state(
+	id int NOT NULL AUTO_INCREMENT,
+	-- get_abolition_count 
+	nuke_num int,
+	nuke_max,
+	status int,
+	abolition_count int,
+	notes varchar(500),
+	-- get_login_param
+	hero_threshold_point int,
+	not_hero_threshold_point int,
+	is_able_to_buy_fob4 bool,
+	is_stuck_rescue bool,
+	online_challenge_task_end_date int, -- get_login_param
+	PRIMARY KEY(id)
+);
 
+create table if not exists challenge_task_reward(
+	int id NOT NULL,
+	bottom_type int,
+	rate int,
+	section int,
+	reward_type int,
+	value int,
+	PRIMARY KEY(id)
+);
+
+create table if not exists cluster_build_costs(
+	-- used in get_login params
+	-- see cluster_build_costs->etc
+	-- most likely first cluster is local cluster and second one is fob
+	-- there will be 1-8 entries, 1-4 for local and 5-8 for fob
+	int id NOT NULL,
+	gmp int,
+	resource_a_count int,
+	resource_a_id int.
+	resource_b_count int,
+	resource_b_id int,
+	time_minute int,
+	PRIMARY KEY(id),
+	FOREIGN KEY(resource_a_id) REFERENCES tpp_resource(id) ON DELETE CASCADE,
+	FOREIGN KEY(resource_b_id) REFERENCES tpp_resource(id) ON DELETE CASCADE
+);
+
+create table if not exists fob_event_task(
+	-- used in get_login params
+	-- see fob_event_task_list
+	int id NOT NULL AUTO_INCREMENT,
+	reward int,
+	task_type_id int,
+	threshold int,
+	PRIMARY KEY(id),
+	FOREIGN KEY(task_type_id) REFERENCES fob_event_task_type(id) ON DELETE CASCADE
+);
+
+create table if not exists mission(
+	int id NOT NULL,
+	name varchar(100),
+	PRIMARY KEY(id)
+);
+
+
+create table if not exists online_challenge_task(
+	int id NOT NULL AUTO_INCREMENT,
+	mission_id int,
+	reward_id int,
+	PRIMARY KEY(id),
+	FOREIGN KEY(mission_id) REFERENCES mission(id) ON DELETE CASCADE,
+	FOREIGN KEY(reward_id) REFERENCES challenge_task_reward(id) ON DELETE CASCADE
+);
+
+create table if not exists server_product_param(
+	id int NOT NULL,
+	dev_coin int,
+	dev_gmp int,
+	dev_item_1 int, -- reference?
+	dev_item_2 int, -- reference?
+	dev_platlv01 int,
+	dev_platlv02 int,
+	dev_platlv03 int,
+	dev_platlv04 int,
+	dev_platlv05 int,
+	dev_platlv06 int,
+	dev_platlv07 int,
+	dev_rescount01_value int,
+	dev_rescount02_value int,
+	dev_resource01_id int,
+	dev_resource02_id int,
+	dev_skil int,
+	dev_special int,
+	dev_time int,
+	open bool,
+	product_type int, --reference?
+	use_gmp int,
+	use_rescount01_value int,
+	use_rescount02_value int,
+	use_resource01_id int,
+	use_resource02_id int,
+	PRIMARY KEY(id),
+	FOREIGN KEY(dev_resource01_id) REFERENCES tpp_resource(id) ON DELETE CASCADE,
+	FOREIGN KEY(dev_resource02_id) REFERENCES tpp_resource(id) ON DELETE CASCADE,
+	FOREIGN KEY(use_resource01_id) REFERENCES tpp_resource(id) ON DELETE CASCADE,
+	FOREIGN KEY(use_resource02_id) REFERENCES tpp_resource(id) ON DELETE CASCADE
+);
+
+create table if not exists server_text(
+	identifier varchar(100) NOT NULL,
+	language varchar(4) NOT NULL,
+	text varchar(50000),
+	PRIMARY KEY(identifier,language)
+);
+
+create table if not exists staff_rank_bonus_rate(
+	int id NOT NULL AUTO_INCREMENT,
+	p1 int,
+	p2 int,
+	PRIMARY KEY(id)
+);
+
+create table if not exists fob_event_task_type(
+	-- TODO
+	int id NOT NULL,
+	PRIMARY KEY(id)
+);
+
+create table if not exists tpp_resource(
+	-- TODO
+	int id NOT NULL,
+	PRIMARY KEY(id)
+);
 -- unused params
--- sync_mother_base
+-- sync_mother_base - sent from client
 --
 ---- equip_flag
 ---- equip_grade
@@ -126,3 +256,12 @@ create table if not exists player_vars(
 ---- security_level
 ---- tape_flag
 ---- version
+--
+-- get_login_param - sent from server
+---- fob_event_task_result_param
+------ event_id
+------ normal_defense_same_time_bonus
+------ event_sneak_clear_point_max
+------ event_sneak_clear_point_min
+------ ranking_espi_event_ids
+------ ranking_pf_event_ids
