@@ -113,14 +113,12 @@ create table if not exists player_vars(
 
 create table if not exists server_state(
 	id int NOT NULL AUTO_INCREMENT,
-	-- get_abolition_count 
-	nuke_num int,
-	nuke_max,
+	nuke_num int, -- get_abolition_count 
+	nuke_max int,
 	status int,
 	abolition_count int,
 	notes varchar(500),
-	-- get_login_param
-	hero_threshold_point int,
+	hero_threshold_point int, -- get_login_param
 	not_hero_threshold_point int,
 	is_able_to_buy_fob4 bool,
 	is_stuck_rescue bool,
@@ -129,12 +127,12 @@ create table if not exists server_state(
 );
 
 create table if not exists challenge_task_reward(
-	int id NOT NULL,
+	id int NOT NULL,
 	bottom_type int,
 	rate int,
 	section int,
 	reward_type int,
-	value int,
+	reward_value int,
 	PRIMARY KEY(id)
 );
 
@@ -143,10 +141,10 @@ create table if not exists cluster_build_costs(
 	-- see cluster_build_costs->etc
 	-- most likely first cluster is local cluster and second one is fob
 	-- there will be 1-8 entries, 1-4 for local and 5-8 for fob
-	int id NOT NULL,
+	id int NOT NULL,
 	gmp int,
 	resource_a_count int,
-	resource_a_id int.
+	resource_a_id int,
 	resource_b_count int,
 	resource_b_id int,
 	time_minute int,
@@ -158,7 +156,7 @@ create table if not exists cluster_build_costs(
 create table if not exists fob_event_task(
 	-- used in get_login params
 	-- see fob_event_task_list
-	int id NOT NULL AUTO_INCREMENT,
+	id int NOT NULL AUTO_INCREMENT,
 	reward int,
 	task_type_id int,
 	threshold int,
@@ -167,14 +165,14 @@ create table if not exists fob_event_task(
 );
 
 create table if not exists mission(
-	int id NOT NULL,
+	id int NOT NULL,
 	name varchar(100),
 	PRIMARY KEY(id)
 );
 
 
 create table if not exists online_challenge_task(
-	int id NOT NULL AUTO_INCREMENT,
+	id int NOT NULL AUTO_INCREMENT,
 	mission_id int,
 	reward_id int,
 	PRIMARY KEY(id),
@@ -224,7 +222,7 @@ create table if not exists server_text(
 );
 
 create table if not exists staff_rank_bonus_rate(
-	int id NOT NULL AUTO_INCREMENT,
+	id int NOT NULL AUTO_INCREMENT,
 	p1 int,
 	p2 int,
 	PRIMARY KEY(id)
@@ -232,13 +230,13 @@ create table if not exists staff_rank_bonus_rate(
 
 create table if not exists fob_event_task_type(
 	-- TODO
-	int id NOT NULL,
+	id int NOT NULL,
 	PRIMARY KEY(id)
 );
 
 create table if not exists tpp_resource(
 	-- TODO
-	int id NOT NULL,
+	id int NOT NULL,
 	PRIMARY KEY(id)
 );
 -- unused params
