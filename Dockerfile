@@ -8,7 +8,6 @@ RUN apt-get update && \
                     wget \
                     gnupg2 \
                     python-mysqldb \
-                    dumb-init \
                     vim \
     && wget http://repo.percona.com/apt/percona-release_0.1-5.stretch_all.deb \
     && dpkg -i percona-release_0.1-5.stretch_all.deb \
@@ -30,5 +29,4 @@ RUN a2ensite mgs_server \
 	&& chmod +x /entrypoint.sh \
 	&& rm /percona-release_0.1-5.stretch_all.deb
 EXPOSE 80
-# ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/entrypoint.sh"]
