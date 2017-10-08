@@ -1,4 +1,4 @@
--- create database mgsv_server;
+create database if not exists mgsv_server;
 use mgsv_server;
 
 -- defines parameters of a single FOB, mother_base_param in mother_base_sync command
@@ -88,8 +88,6 @@ create table if not exists server_user(
 create table if not exists player_vars(
 	id int NOT NULL AUTO_INCREMENT,
 	player_id int NOT NULL,
-
-
 	espionage_lose int, -- CMD_GET_PLAYERLIST
 	espionage_win int,
 	fob_grade int, 
@@ -108,7 +106,7 @@ create table if not exists player_vars(
 
 	mother_base_data json,
 	PRIMARY KEY(id),
-	FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
+	FOREIGN KEY(player_id) REFERENCES player(id) ON DELETE CASCADE
 );
 
 create table if not exists server_state(
@@ -126,6 +124,26 @@ create table if not exists server_state(
 	PRIMARY KEY(id)
 );
 
+create table if not exists server_text(
+	identifier varchar(100) NOT NULL,
+	language varchar(4) NOT NULL,
+	text varchar(50000),
+	PRIMARY KEY(identifier,language)
+);
+
+create table if not exists staff_rank_bonus_rate(
+	id int NOT NULL AUTO_INCREMENT,
+	p1 int,
+	p2 int,
+	PRIMARY KEY(id)
+);
+
+create table if not exists fob_event_task_type(
+	-- TODO
+	id int NOT NULL,
+	PRIMARY KEY(id)
+);
+
 create table if not exists challenge_task_reward(
 	id int NOT NULL,
 	bottom_type int,
@@ -133,6 +151,12 @@ create table if not exists challenge_task_reward(
 	section int,
 	reward_type int,
 	reward_value int,
+	PRIMARY KEY(id)
+);
+
+create table if not exists tpp_resource(
+	-- TODO
+	id int NOT NULL,
 	PRIMARY KEY(id)
 );
 
@@ -184,8 +208,10 @@ create table if not exists server_product_param(
 	id int NOT NULL,
 	dev_coin int,
 	dev_gmp int,
-	dev_item_1 int, -- reference?
-	dev_item_2 int, -- reference?
+	dev_item_1 int, 
+	-- reference?
+	dev_item_2 int, 
+	-- reference?
 	dev_platlv01 int,
 	dev_platlv02 int,
 	dev_platlv03 int,
@@ -201,7 +227,8 @@ create table if not exists server_product_param(
 	dev_special int,
 	dev_time int,
 	open bool,
-	product_type int, --reference?
+	product_type int, 
+	-- reference?
 	use_gmp int,
 	use_rescount01_value int,
 	use_rescount02_value int,
@@ -214,52 +241,30 @@ create table if not exists server_product_param(
 	FOREIGN KEY(use_resource02_id) REFERENCES tpp_resource(id) ON DELETE CASCADE
 );
 
-create table if not exists server_text(
-	identifier varchar(100) NOT NULL,
-	language varchar(4) NOT NULL,
-	text varchar(50000),
-	PRIMARY KEY(identifier,language)
-);
 
-create table if not exists staff_rank_bonus_rate(
-	id int NOT NULL AUTO_INCREMENT,
-	p1 int,
-	p2 int,
-	PRIMARY KEY(id)
-);
 
-create table if not exists fob_event_task_type(
-	-- TODO
-	id int NOT NULL,
-	PRIMARY KEY(id)
-);
 
-create table if not exists tpp_resource(
-	-- TODO
-	id int NOT NULL,
-	PRIMARY KEY(id)
-);
 -- unused params
 -- sync_mother_base - sent from client
 --
----- equip_flag
----- equip_grade
----- invalid_fob
----- local_base_param
----- local_base_time
----- mother_base_num
----- pf_skill_staff
----- pickup_open
----- section_open
----- security_level
----- tape_flag
----- version
+-- -- equip_flag
+-- -- equip_grade
+-- -- invalid_fob
+-- -- local_base_param
+-- -- local_base_time
+-- -- mother_base_num
+-- -- pf_skill_staff
+-- -- pickup_open
+-- -- section_open
+-- -- security_level
+-- -- tape_flag
+-- -- version
 --
 -- get_login_param - sent from server
----- fob_event_task_result_param
------- event_id
------- normal_defense_same_time_bonus
------- event_sneak_clear_point_max
------- event_sneak_clear_point_min
------- ranking_espi_event_ids
------- ranking_pf_event_ids
+-- -- fob_event_task_result_param
+-- ---- event_id
+-- ---- normal_defense_same_time_bonus
+-- ---- event_sneak_clear_point_max
+-- ---- event_sneak_clear_point_min
+-- ---- ranking_espi_event_ids
+-- ---- ranking_pf_event_ids

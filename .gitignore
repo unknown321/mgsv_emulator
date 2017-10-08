@@ -4,3 +4,4 @@ emulator/settings.py
 emulator/server_commands.py
 *.swp
 *.pyc
+static_key.bin
