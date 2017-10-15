@@ -9,7 +9,7 @@ class Database(object):
 	def connect(self):
 		self._db = MySQLdb.connect(host="localhost",
 					 user="root",
-					 passwd="",
+					 passwd="123",
 					 db="mgsv_server")
 	
 	def disconnect(self):
