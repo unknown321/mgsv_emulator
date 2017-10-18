@@ -5,4 +5,6 @@ class Receiver:
     """
 
     def action(self, data):
-        return data + ' - I am from receviver'
+        # add default headers to the response body
+        # check for authorization?
+        return str(data) + ' - I am from receviver'

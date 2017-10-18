@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from .blowfish import blowfish
+from blowfish.Blowfish import Blowfish
 import base64
 import struct
 import json
 import zlib
 import warnings
-from . import settings
+import settings
 import sys
 
 ENCODE_PACK = '>l'
@@ -16,7 +16,7 @@ class Encoder(object):
 	"""docstring for Encoder"""
 	def __init__(self, static_key=None, crypto_key=None):
 		super(Encoder, self).__init__()
-		self.__static_blowfish__ = blowfish()
+		self.__static_blowfish__ = Blowfish()
 		if not static_key:
 			static_key = bytearray(open(settings.STATIC_KEY_FILE_PATH,'rb').read(16))
 		self.__static_blowfish__.initialize(static_key)
@@ -28,7 +28,7 @@ class Encoder(object):
 			self.__init_session_blowfish__()
 
 	def __init_session_blowfish__(self, crypto_key=None):
-		self.__session_blowfish__ = blowfish()
+		self.__session_blowfish__ = Blowfish()
 		if crypto_key:
 			if isinstance(crypto_key, str):
 				crypto_key = bytearray(base64.decodestring(crypto_key.encode()))

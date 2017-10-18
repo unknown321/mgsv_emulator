@@ -1,9 +1,9 @@
-from .blowfish import blowfish
+from blowfish.Blowfish import Blowfish
 import base64
 import struct
 import json
 import zlib
-from . import settings
+import settings
 import sys
 
 DECODE_PACK = '>l'
@@ -18,7 +18,7 @@ class Decoder(object):
 	"""class for decoding messages sent from server to client"""
 	def __init__(self, static_key=None, crypto_key=None):
 		super(Decoder, self).__init__()
-		self.__static_blowfish__ = blowfish()
+		self.__static_blowfish__ = Blowfish()
 		if not static_key:
 			static_key = bytearray(open(settings.STATIC_KEY_FILE_PATH,'rb').read(16))
 		self.__static_blowfish__.initialize(static_key)
@@ -48,7 +48,7 @@ class Decoder(object):
 		return crypto_key
 
 	def __init_session_blowfish__(self, crypto_key=None):
-		self.__session_blowfish__ = blowfish()
+		self.__session_blowfish__ = Blowfish()
 		if crypto_key:
 			if isinstance(crypto_key, str):
 				crypto_key = bytearray(base64.decodestring(crypto_key.encode()))

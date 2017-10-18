@@ -5,8 +5,7 @@ import ctypes
 import copy
 from . import encoder_consts
 
-class blowfish(object):
-	"""docstring for blowfish"""
+class Blowfish(object):
 	def __init__(self):
 		self.__N__ = 16
 		self.__P__ = []
@@ -16,11 +15,11 @@ class blowfish(object):
 				self.__S__[num][sub_num] = self.__to_clong__(self.__swap32__(self.__S__[num][sub_num]))
 
 	def __swap32__(self, i):
-		return struct.unpack("<I", struct.pack(">I", i))[0]	
+		return struct.unpack("<I", struct.pack(">I", i))[0]
 
 	def __to_clong__(self, v):
 		return ctypes.c_long(v).value
-	
+
 	def __F__(self, x):
 		a = x >> 24 & 0x00FF
 		b = x >> 16 & 0x00FF
