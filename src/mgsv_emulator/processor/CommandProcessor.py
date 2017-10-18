@@ -20,7 +20,7 @@ class CommandProcessor:
         parser = CommandParser()
         command_name = parser.parse_name(decoded_request)
         command_data = parser.parse_data(decoded_request)
-        mod = __import__('server_commands.{}'.format(command_name), fromlist=[command_name])
+        mod = __import__('server.command.{}'.format(command_name), fromlist=[command_name])
         command = getattr(mod, command_name)
         receiver = Receiver()
         my_command = command(receiver)

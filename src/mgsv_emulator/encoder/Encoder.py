@@ -73,13 +73,13 @@ class Encoder(object):
 
 	def encode(self, _command):
 		if type(_command) != dict:
-                        # result of command processing wasn't dict - this is not acceptable
+			# result of command processing wasn't dict - this is not acceptable
 			warnings.warn('You are using plain text, parameters might be not in the right order!', Warning, stacklevel=2)
-                        return ""
+			return ""
 
 		# encrypt everything inside command
 		if (type(_command) == dict) and ('data' in _command):
-                        # remove spaces, replace quotes, like C does + calculate new size
+			# remove spaces, replace quotes, like C does + calculate new size
 			_command['data'] = self.__compress_data__(_command['data'])
 			_command['original_size'] = len(_command['data'])
 
