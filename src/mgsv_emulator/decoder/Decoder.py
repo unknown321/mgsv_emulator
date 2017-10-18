@@ -15,45 +15,52 @@ if sys.maxsize > 2**32:
 # remove ',' and line breaks
 
 class Decoder(object):
-	"""class for decoding messages sent from server to client"""
+	"""class for decoding messages sent from server to client
+        this is a great example of complicated non-pythonic class
+
+        how it _should_ be: get already decoded bytestring (not base64 encoded),
+        decode it with provided key and return bytestring. Json conversation,
+        zlib decompression etc should be done outside of this class, but hey, it
+        works"""
 	def __init__(self, static_key=None, crypto_key=None):
-		super(Decoder, self).__init__()
-		self.__static_blowfish__ = Blowfish()
+                # try to initialize static part without explicitly provided static key
+		self.__static_blowfish = Blowfish()
 		if not static_key:
 			static_key = bytearray(open(settings.STATIC_KEY_FILE_PATH,'rb').read(16))
-		self.__static_blowfish__.initialize(static_key)
 
-		self.__session_blowfish__ = None
-		self.__crypto_key__ = None
-
-
-
+#================= a dirty hack for debugging
+#              crypto_key = bytearray(base64.decodestring('AAAAAAAAAAAAAAAAAAAAAA=='.encode()))
 #================= remove dirty hack
-#		crypto_key = bytearray(base64.decodestring('AAAAAAAAAAAAAAAAAAAAAA=='.encode()))
-#================= remove dirty hack
+		self.__static_blowfish.initialize(static_key)
 
+		self.__session_blowfish = None
+		self.__crypto_key = None
 
 		if crypto_key:
-			self.__crypto_key__ = crypto_key
+                        # this is an encrypted session with provided crypto key
+                        # need an instance of blowfish capable of decoding it
+			self.__crypto_key = crypto_key
 			self.__init_session_blowfish__()
 
 	def __get_crypto_key__(self, data):
+                # try to pull crypto_key from json
 		crypto_key = None
 		if 'data' in data:
 			if isinstance(data['data'], dict):
 				if 'crypto_key' in data['data']:
 					if len(data['data']['crypto_key']) > 0:
 						crypto_key = bytearray(base64.decodestring(data['data']['crypto_key'].encode()))
-						self.__crypto_key__ = crypto_key
+						self.__crypto_key = crypto_key
 		return crypto_key
 
 	def __init_session_blowfish__(self, crypto_key=None):
-		self.__session_blowfish__ = Blowfish()
+                # initialize bowfish instance capable of decoding session data
+		self.__session_blowfish = Blowfish()
 		if crypto_key:
 			if isinstance(crypto_key, str):
 				crypto_key = bytearray(base64.decodestring(crypto_key.encode()))
-			self.__crypto_key__ = crypto_key
-		self.__session_blowfish__.initialize(self.__crypto_key__)
+			self.__crypto_key = crypto_key
+		self.__session_blowfish.initialize(self.__crypto_key)
 
 	def __get_json__(self, text):
 		text = text[:text.rfind('}')+1]
@@ -66,6 +73,8 @@ class Decoder(object):
 		return text
 
 	def __decipher__(self, blow, data):
+                # read data in chunks with size of 8 and decode them using corresponding 
+                # blowfish instance
 		offset = 0
 		full_text = bytes()
 		while offset!= len(data):
@@ -90,30 +99,32 @@ class Decoder(object):
 		except Exception as e:
 			raise e
 		else:
-			data_decoded = self.__decipher__(self.__static_blowfish__, data_encoded)
+			data_decoded = self.__decipher__(self.__static_blowfish, data_encoded)
+
 		try:
 			# json conversions can be wonky
 			data_json = self.__get_json__(data_decoded.decode())
 		except Exception as e:
 			raise e
 
-		if not self.__session_blowfish__:
-			# there was no crypto_key set during class initialization
+		if not self.__session_blowfish:
+			# there was no crypto_key set during instance initialization for whatever 
+                        # reason, so let's try to pull it from json
+                        # this is a workaround for requauth_https I think
 			self.__get_crypto_key__(data_json)
-			if self.__crypto_key__:
+			if self.__crypto_key:
 				self.__init_session_blowfish__()
 
 		if data_json['session_crypto']:
-			if self.__session_blowfish__:
+			if self.__session_blowfish:
 				# COMPOUND encryption with blowfish
 				embedded = base64.decodestring(data_json['data'].encode())
-				data_json['data'] = self.__decipher__(self.__session_blowfish__, embedded)
+				data_json['data'] = self.__decipher__(self.__session_blowfish, embedded)
 				if data_json['compress']:
 					data_json['data'] = zlib.decompress(data_json['data'])
 			else:
 				# encryption is used, but we have no session key
 				# this is ok, since we need to get enc key from mysql using session id
-				#raise ValueError('Message is encoded, but no crypto_key was provided')
 				pass
 		else:
 			# no encryption, used in CMD_GET_URLLIST and others before getting session key
@@ -133,5 +144,4 @@ class Decoder(object):
 				pass
 			else:
 				data_json['data'] = j
-
 		return data_json

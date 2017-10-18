@@ -13,27 +13,26 @@ if sys.maxsize > 2**32:
 	ENCODE_PACK = '>L'
 
 class Encoder(object):
-	"""docstring for Encoder"""
+	"""another example of bad class - see notes for decoder"""
 	def __init__(self, static_key=None, crypto_key=None):
-		super(Encoder, self).__init__()
-		self.__static_blowfish__ = Blowfish()
+		self.__static_blowfish = Blowfish()
 		if not static_key:
 			static_key = bytearray(open(settings.STATIC_KEY_FILE_PATH,'rb').read(16))
-		self.__static_blowfish__.initialize(static_key)
+		self.__static_blowfish.initialize(static_key)
 
-		self.__session_blowfish__ = None
-		self.__crypto_key__ = None
+		self.__session_blowfish = None
+		self.__crypto_key = None
 		if crypto_key:
-			self.__crypto_key__ = crypto_key
+			self.__crypto_key = crypto_key
 			self.__init_session_blowfish__()
 
 	def __init_session_blowfish__(self, crypto_key=None):
-		self.__session_blowfish__ = Blowfish()
+		self.__session_blowfish = Blowfish()
 		if crypto_key:
 			if isinstance(crypto_key, str):
 				crypto_key = bytearray(base64.decodestring(crypto_key.encode()))
-			self.__crypto_key__ = crypto_key
-		self.__session_blowfish__.initialize(self.__crypto_key__)
+			self.__crypto_key = crypto_key
+		self.__session_blowfish.initialize(self.__crypto_key)
 
 	def __encipher__(self, blow, data):
 		offset = 0
@@ -74,9 +73,9 @@ class Encoder(object):
 
 	def encode(self, _command):
 		if type(_command) != dict:
-                    #honestly, we should break right here since no code is executing in that case
+                        # result of command processing wasn't dict - this is not acceptable
 			warnings.warn('You are using plain text, parameters might be not in the right order!', Warning, stacklevel=2)
-
+                        return ""
 
 		# encrypt everything inside command
 		if (type(_command) == dict) and ('data' in _command):
@@ -95,11 +94,11 @@ class Encoder(object):
 					_command['data'] = self.__add_padding__(_command['data'])
 				else:
 					_command['data'] = self.__add_padding__(_command['data'])
-				_command['data'] = base64.encodestring(self.__encipher__(self.__session_blowfish__, _command['data'])).decode()
+				_command['data'] = base64.encodestring(self.__encipher__(self.__session_blowfish, _command['data'])).decode()
 				_command['data'] = _command['data'].replace('\n','\r\n').rstrip('\r\n')
 
 		text = json.dumps(_command,sort_keys=True).replace(" ",'')
 		text = self.__add_padding__(text.encode())
-		text = base64.encodestring(self.__encipher__(self.__static_blowfish__, bytearray(text)))
+		text = base64.encodestring(self.__encipher__(self.__static_blowfish, bytearray(text)))
 		text = text.decode().replace('\n','\r\n').rstrip('\r\n')
 		return text
