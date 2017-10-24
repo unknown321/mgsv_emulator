@@ -2,6 +2,6 @@ from command.Command import Command
 
 class CMD_AUTH_TICKET(Command):
 
-	def execute(self, data):
-		return self._receiver.action(data)
+    def execute(self, data):
+        return self._receiver.action(data)
 
