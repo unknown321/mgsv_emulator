@@ -1,6 +1,15 @@
 create database if not exists mgsv_server;
 use mgsv_server;
 
+create table if not exists player_session(
+	id int NOT NULL AUTO_INCREMENT,
+	session_hash varchar(50), -- TODO find proper size
+	player_id int NOT NULL,
+	last_access datetime DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY(id),
+	FOREIGN KEY(player_id) REFERENCES player(id) ON DELETE CASCADE
+);
+
 -- defines parameters of a single FOB, mother_base_param in mother_base_sync command
 create table if not exists fob_cluster(
 	id int NOT NULL AUTO_INCREMENT,
@@ -74,7 +83,7 @@ create table if not exists server_user(
 	crypto_key varchar(32), 		-- from server CMD_REQAUTH_HTTPS   , blowfish crypto key used for encrypting session messages
 	last_login datetime,			-- date of last login
 	last_command datetime,			-- date of last received command from client
-	session_id varchar(32),			-- session identifier used for further communications, expires if there was no commands for client for 2 mins
+--	session_id varchar(32),			-- session identifier used for further communications, expires if there was no commands for client for 2 mins
 	client_ip varchar(16), 			-- client ip, can be used for static authentication
 	ex_ip varchar(16), 				-- from client CMD_SEND_IPANDPORT
 	ex_port varchar(7),
