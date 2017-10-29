@@ -2,7 +2,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
-from mgsv_emulator.emulator.server import Server
+from mgsv_emulator.processor.CommandProcessor import CommandProcessor
 import urllib.parse
 from datetime import datetime
 
@@ -13,11 +13,10 @@ def log_event(text, event_type=0):
         logfile.close()
 
 def application(environ, start_response):
-        #log_event('--------------------------')
         status = '200 OK'
         output = b""
         if environ['REQUEST_METHOD'] == 'POST':
-                server = Server()
+                processor = CommandProcessor()
 
                 # the environment variable CONTENT_LENGTH may be empty or missing
                 try:
@@ -30,10 +29,7 @@ def application(environ, start_response):
                 d = urllib.parse.parse_qs(k.decode(),True)
                 client_request = d.get('httpMsg',[''])[0]
 
-                # log_event(httpMsg)
-
-
-                output = server.process_request(client_request, client_ip)
+                output = processor.process(client_request)
                 # command = copy.deepcopy(s.__command_get__(str(client_request['data']['msgid'])))
                 # append_date(command)
                 # log_event(command)

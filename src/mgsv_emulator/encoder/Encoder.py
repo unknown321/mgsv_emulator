@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from blowfish.Blowfish import Blowfish
+from ..blowfish.Blowfish import Blowfish
 import base64
 import struct
 import json
 import zlib
 import warnings
-import settings
+from .. import settings
 import sys
 
 ENCODE_PACK = '>l'

@@ -23,13 +23,13 @@ RUN apt-get update && \
     && pip3 install requests setuptools wheel \
     && pip3 install mysqlclient \
     && chown www-data:www-data /var/log/app.log /var/log/error.log
-COPY [ "emulator", "/var/www/mgsv_server/wsgi-scripts/mgsv_emulator/emulator" ]
-COPY myapp.wsgi /var/www/mgsv_server/wsgi-scripts
-COPY mgs_server.conf /etc/apache2/sites-available/
-COPY static_key.bin /var/www/mgsv_server/
-COPY eula.var /var/www/mgsv_server/www/tppstmweb/eula
-COPY database.py /var/www/mgsv_server/wsgi-scripts
-COPY entrypoint.sh /entrypoint.sh
+COPY [ "src/mgsv_emulator", "/var/www/mgsv_server/wsgi-scripts/mgsv_emulator" ]
+COPY files/myapp.wsgi /var/www/mgsv_server/wsgi-scripts
+COPY files/mgs_server.conf /etc/apache2/sites-available/
+COPY files/static_key.bin /var/www/mgsv_server/
+COPY files/eula.var /var/www/mgsv_server/www/tppstmweb/eula
+COPY files/database.sql /database.sql
+COPY files/entrypoint.sh /entrypoint.sh
 RUN a2ensite mgs_server \
 	&& a2dissite 000-default \
 	&& chmod +x /entrypoint.sh \

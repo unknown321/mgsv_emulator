@@ -1,4 +1,4 @@
-from command.Command import Command
+from mgsv_emulator.command.Command import Command
 
 class CMD_GET_CHALLENGE_TASK_TARGET_VALUES(Command):
 
