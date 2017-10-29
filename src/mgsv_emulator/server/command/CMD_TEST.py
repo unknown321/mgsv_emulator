@@ -8,4 +8,4 @@ class CMD_TEST(Command):
     """
 
     def execute(self, data):
-        return self._receiver.action(data)
+        return self._receiver.action(data, self.__class__.__name__)

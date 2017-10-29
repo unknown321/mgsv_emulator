@@ -31,7 +31,4 @@ class CommandProcessor:
         execution_result = invoker.execute_commands()
         # there is only one command per request 
         encoder = Encoder()
-        f = open('/tmp/666','w')
-        f.write(str(execution_result[command_name]))
-        f.close()
         return encoder.encode(execution_result[command_name])
