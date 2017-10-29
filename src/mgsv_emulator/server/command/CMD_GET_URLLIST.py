@@ -2,6 +2,11 @@ from mgsv_emulator.command.Command import Command
 
 class CMD_GET_URLLIST(Command):
 
+    def __init__(self, receiver):
+        super(CMD_GET_URLLIST, self).__init__(receiver)
+        self._receiver.encrypt = False
+        self._receiver.compress = True
+
     def get_url_list(self):
         data = {
             'url_list': [
