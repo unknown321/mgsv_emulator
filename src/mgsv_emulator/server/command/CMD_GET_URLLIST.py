@@ -8,6 +8,7 @@ class CMD_GET_URLLIST(Command):
         self._receiver.compress = True
 
     def get_url_list(self):
+        # database.get_url_list
         data = {
             'url_list': [
                 {

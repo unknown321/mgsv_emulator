@@ -1,6 +1,15 @@
 create database if not exists mgsv_server;
 use mgsv_server;
 
+create table if not exists url(
+        id int NOT NULL AUTO_INCREMENT,
+        url_type varchar(10),
+        url_version int,
+        url_link varchar(100),
+        PRIMARY KEY(id)
+);
+
+
 -- player parameters, WIP
 create table if not exists player(
 	id int NOT NULL AUTO_INCREMENT,
@@ -250,7 +259,7 @@ create table if not exists server_product_param(
 );
 
 
-
+INSERT INTO url(url_type, url_link, url_version) VALUES('GATE','http://192.168.99.100/tppstm/gate',10),('WEB','http://192.168.99.100/tppstm/main',10),('EULA','http://192.168.99.100/tppstmweb/eula/eula.var',4),('HEATMAP','http://192.168.99.100/tppstmweb/heatmap',0),('DEVICE','http://192.168.99.100/tppstm/main',0)
 
 -- unused params
 -- sync_mother_base - sent from client
