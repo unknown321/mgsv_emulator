@@ -13,8 +13,7 @@ class CMD_GET_URLLIST(Command):
         all_urls = url.get_all_urls()
         data = {
             'url_list':all_urls,
-            'url_num': len(all_urls),
-            'xuid': None
+            'url_num': len(all_urls)
         }
         return data
 

@@ -18,6 +18,7 @@ class Receiver:
                     'msgid': msgid,
                     'result': 'NOERR',
                     'rqid': 0,
+                    'xuid': 0,
             },
             'original_size': 0,
             'session_crypto': self.encrypt,
