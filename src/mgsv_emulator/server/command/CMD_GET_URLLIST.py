@@ -12,7 +12,7 @@ class CMD_GET_URLLIST(Command):
         url = Url()
         all_urls = url.get_all_urls()
         data = {
-            'url_list':list(all_urls),
+            'url_list':all_urls,
             'url_num': len(all_urls),
             'xuid': None
         }
@@ -21,4 +21,3 @@ class CMD_GET_URLLIST(Command):
     def execute(self, data):
         data = self.get_url_list()
         return self._receiver.action(data, self.__class__.__name__)
-

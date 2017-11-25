@@ -5,6 +5,9 @@ from ..encoder.Encoder import Encoder
 from ..decoder.Decoder import Decoder
 import importlib
 
+import logging
+logger = logging.getLogger('mgsv')
+
 class CommandProcessor:
     def __init__(self):
         pass
@@ -16,7 +19,8 @@ class CommandProcessor:
         result = request
         decoder = Decoder()
         decoded_request = decoder.decode(result)
-        print(decoded_request)
+
+        logger.info('Decoded request: {}'.format(decoded_request))
 
         parser = CommandParser()
         command_name = parser.parse_name(decoded_request)
@@ -29,6 +33,9 @@ class CommandProcessor:
         invoker.store_command(my_command)
         invoker.store_data(command_data)
         execution_result = invoker.execute_commands()
+
+        logger.info('Execution result: {}'.format(str(execution_result)))
+
         # there is only one command per request 
         encoder = Encoder()
         return encoder.encode(execution_result[command_name])

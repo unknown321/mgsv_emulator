@@ -25,12 +25,19 @@ class Url():
             version = result[0]['url_version']
         return version
 
-
     def get_all_urls(self):
-        all_urls = ()
+        all_urls = []
         sql = 'SELECT url_link, url_type, url_version from url'
         values = ()
         result = self._database.fetch_query(sql, values, get_dict=True)
         if len(result) > 0:
-            all_urls = result
+            sql = 'SELECT value from settings where name="base_url"'
+            values = ()
+            base_url = self._database.fetch_query(sql, (), get_dict=True)[0]['value']
+            for i in result:
+                all_urls.append({
+                    "type": i['url_type'],
+                    "url": base_url + i['url_link'],
+                    "version": i['url_version']
+                })
         return all_urls

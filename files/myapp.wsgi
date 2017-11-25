@@ -5,13 +5,15 @@ sys.path.append(os.path.dirname(__file__))
 from mgsv_emulator.processor.CommandProcessor import CommandProcessor
 import urllib.parse
 from datetime import datetime
+from mgsv_emulator.logger import Logger
 
+logger = Logger.create_logger('mgsv')
 
-def log_event(text, event_type=0):
-        logfile = open('/var/www/mgsv_server/logs/app.log','a')
-        logfile.write('[{}] {}: {}\n'.format(datetime.now(), event_type, text))
-        logfile.close()
-
+#def log_event(text, event_type=0):
+#        logfile = open('/var/www/mgsv_server/logs/app.log','a')
+#        logfile.write('[{}] {}: {}\n'.format(datetime.now(), event_type, text))
+#        logfile.close()
+#
 def application(environ, start_response):
         status = '200 OK'
         output = b""
@@ -29,7 +31,11 @@ def application(environ, start_response):
                 d = urllib.parse.parse_qs(k.decode(),True)
                 client_request = d.get('httpMsg',[''])[0]
 
+                logger.info('New client request: {}'.format(client_request))
+
                 output = processor.process(client_request)
+
+                logger.info('Encoded response from processor: {}'.format(str(output)))
                 # command = copy.deepcopy(s.__command_get__(str(client_request['data']['msgid'])))
                 # append_date(command)
                 # log_event(command)
