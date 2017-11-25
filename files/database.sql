@@ -258,9 +258,16 @@ create table if not exists server_product_param(
 	FOREIGN KEY(use_resource02_id) REFERENCES tpp_resource(id) ON DELETE CASCADE
 );
 
+create table if not exists settings(
+    id int not null AUTO_INCREMENT,
+    name varchar(50),
+    value varchar(255),
+    PRIMARY KEY(id,name)
+);
 
-INSERT INTO url(url_type, url_link, url_version) VALUES('GATE','http://192.168.99.100/tppstm/gate',10),('WEB','http://192.168.99.100/tppstm/main',10),('EULA','http://192.168.99.100/tppstmweb/eula/eula.var',4),('HEATMAP','http://192.168.99.100/tppstmweb/heatmap',0),('DEVICE','http://192.168.99.100/tppstm/main',0)
+INSERT INTO settings(name, value) VALUES('base_url','http://192.168.99.100/');
 
+INSERT INTO url(url_type, url_link, url_version) VALUES('GATE','tppstm/gate',10),('WEB','tppstm/main',10),('EULA','tppstmweb/eula/eula.var',4),('HEATMAP','tppstmweb/heatmap',0),('DEVICE','tppstm/main',0);
 -- unused params
 -- sync_mother_base - sent from client
 --

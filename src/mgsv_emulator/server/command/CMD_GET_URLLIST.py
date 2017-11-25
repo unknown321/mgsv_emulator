@@ -1,4 +1,5 @@
 from mgsv_emulator.command.Command import Command
+from mgsv_emulator.server.entity.Url import Url
 
 class CMD_GET_URLLIST(Command):
 
@@ -8,38 +9,13 @@ class CMD_GET_URLLIST(Command):
         self._receiver.compress = True
 
     def get_url_list(self):
-        # database.get_url_list
+        url = Url()
+        all_urls = url.get_all_urls()
         data = {
-            'url_list': [
-                {
-                    'type': 'GATE',
-                    'url': 'https://mgstpp-game.konamionline.com/tppstm/gate',
-                    'version': 9
-                },
-                {
-                    'type': 'WEB',
-                    'url': 'https://mgstpp-game.konamionline.com/tppstm/main',
-                    'version': 9
-                },
-                {
-                    'type': 'EULA',
-                    'url': 'http://mgstpp-game.konamionline.com/tppstmweb/eula/eula.var',
-                    'version': 3
-                },
-                {
-                    'type': 'HEATMAP',
-                    'url': 'http://mgstpp-app.konamionline.com/tppstmweb/heatmap',
-                    'version': 0
-                },
-                {
-                    'type': 'DEVICE',
-                    'url': 'https://mgstpp-app.konamionline.com/tppstm/main',
-                    'version': 0
-                }
-            ],
-            'url_num': 5,
+            'url_list':list(all_urls),
+            'url_num': len(all_urls),
             'xuid': None
-       }
+        }
         return data
 
     def execute(self, data):
