@@ -1,6 +1,8 @@
 # mgsv_emulator
 mgsv client/server emulator
 
+Code in master is clunky and hard to extend, I am working on a better version in v2 branch.
+
 Types of encryption implemented: COMMON, COMPOUND.
 
 # Requirements
