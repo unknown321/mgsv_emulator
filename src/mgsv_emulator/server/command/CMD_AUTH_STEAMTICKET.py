@@ -19,6 +19,8 @@ class CMD_AUTH_STEAMTICKET(Command):
         pass
 
     def execute(self, data):
+        p = Proxy()
+
         data = self.get_account()
         return self._receiver.action(data, self.__class__.__name__)
 

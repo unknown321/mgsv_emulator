@@ -1,4 +1,4 @@
-from mgsv_emulator.database import Database
+from mgsv_emulator.database.Database import Database
 
 class Url():
     def __init__(self):
