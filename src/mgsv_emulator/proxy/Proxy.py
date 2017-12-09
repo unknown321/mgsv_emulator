@@ -35,6 +35,8 @@ class Proxy(object):
             httpclient = HttpClient()
             result = httpclient.send(encrypted_request, '/tppstm/main').text
             logger.debug("Response from proxy server: {}".format(decoder.decode(result)))
+            # TODO: import proxy_handler which will call command handler to process 
+            # the response if needed (for example, for saving password after logging in)
         return result
 
     def send_data_with_auth(self, data):
