@@ -6,6 +6,10 @@ import zlib
 from .. import settings
 import sys
 
+from .. import settings
+import logging
+logger = logging.getLogger(settings.LOGGER_NAME)
+
 DECODE_PACK = '>l'
 if sys.maxsize > 2**32:
         DECODE_PACK = '>L'
@@ -63,6 +67,7 @@ class Decoder(object):
                 self.__session_blowfish.initialize(self.__crypto_key)
 
         def __get_json__(self, text):
+                # TODO: this breaks proxying of CMD_STEAM_AUTH
                 text = text[:text.rfind('}')+1]
                 text = text.replace('\\\\r\\\\n','')
                 text = text.replace('\\r\\n','')
@@ -100,6 +105,7 @@ class Decoder(object):
                         raise e
                 else:
                         data_decoded = self.__decipher__(self.__static_blowfish, data_encoded)
+                        logger.debug('Decoded data: {}'.format(data_decoded))
 
                 try:
                         # json conversions can be wonky

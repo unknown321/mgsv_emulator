@@ -31,11 +31,11 @@ def application(environ, start_response):
                 d = urllib.parse.parse_qs(k.decode(),True)
                 client_request = d.get('httpMsg',[''])[0]
 
-                logger.info('New client request: {}'.format(client_request))
+                logger.debug('New client request: {}'.format(client_request))
 
                 output = processor.process(client_request)
 
-                logger.info('Encoded response from processor: {}'.format(str(output)))
+                logger.debug('Encoded response from processor: {}'.format(str(output)))
                 # command = copy.deepcopy(s.__command_get__(str(client_request['data']['msgid'])))
                 # append_date(command)
                 # log_event(command)

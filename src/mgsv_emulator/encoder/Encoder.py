@@ -8,6 +8,10 @@ import warnings
 from .. import settings
 import sys
 
+from .. import settings
+import logging
+logger = logging.getLogger(settings.LOGGER_NAME)
+
 ENCODE_PACK = '>l'
 if sys.maxsize > 2**32:
 	ENCODE_PACK = '>L'
@@ -81,6 +85,7 @@ class Encoder(object):
 		if (type(_command) == dict) and ('data' in _command):
 			# remove spaces, replace quotes, like C does + calculate new size
 			_command['data'] = self.__compress_data__(_command['data'])
+			logger.debug('Compressed data: {}'.format(_command['data']))
 			_command['original_size'] = len(_command['data'])
 
 			if _command['compress'] and not _command['session_crypto']:

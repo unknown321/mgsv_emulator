@@ -1,6 +1,9 @@
 from ..client.Client import Client
 from .. import settings
 from ..database.Database import Database
+from ..encoder.Encoder import Encoder
+from ..decoder.Decoder import Decoder
+from ..httpclient.HttpClient import HttpClient
 import logging
 logger = logging.getLogger(settings.LOGGER_NAME)
 
@@ -9,20 +12,30 @@ logger = logging.getLogger(settings.LOGGER_NAME)
 ######################
 
 class Proxy(object):
-    """proxy that takes client requests and sends them to konami servers"""
+    """
+    proxy that takes client requests and sends them to konami servers
+    TODO: reuse session to prevent logging in every time
+    """
     def __init__(self, *args, **kwargs):
         # super(Proxy, self).__init__(is_proxy=1)
         pass
 
-    def send_data(self, data):
+    def send_data(self, encrypted_request):
+        """
+        accepts encoded request
+        """
+        decoder = Decoder()
+        data = decoder.decode(encrypted_request)
         if data['session_crypto']:
             # requires login
             logger.info("Got a command for proxying: {}, session: {}".format(data['data']['msgid'], data['session_key']))
             result = self.send_data_with_auth(data)
         else:
             logger.info("Got a command for proxying: {}".format(data['data']['msgid']))
-            result = []
-
+            httpclient = HttpClient()
+            result = httpclient.send(encrypted_request, '/tppstm/main').text
+            logger.debug("Response from proxy server: {}".format(decoder.decode(result)))
+        return result
 
     def send_data_with_auth(self, data):
         # at this point client sends data with session_crypto = True.

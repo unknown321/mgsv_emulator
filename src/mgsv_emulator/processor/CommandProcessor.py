@@ -22,11 +22,12 @@ class CommandProcessor:
         decoder = Decoder()
         decoded_request = decoder.decode(request)
 
-        logger.info('Decoded request: {}'.format(decoded_request))
+        logger.debug('Decoded request: {}'.format(decoded_request))
 
         parser = CommandParser()
         command_name = parser.parse_name(decoded_request)
         command_data = parser.parse_data(decoded_request)
+        logger.info('Got a command: {}'.format(command_name))
         if settings.PROXY_ALL or command_name in settings.PROXY_ALWAYS:
             proxy = Proxy()
             result = proxy.send_data(request)
