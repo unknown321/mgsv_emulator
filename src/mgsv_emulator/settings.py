@@ -9,7 +9,7 @@ STATIC_KEY_FILE_PATH = '/var/www/mgsv_server/static_key.bin'
 #============================================================================
 # logging
 
-LOG_FILE_PATH = '/var/www/mgsv_server/logs/app.log'
+LOG_FILE_PATH = '/var/log/app.log'
 LOGGER_NAME = 'mgsv'
 
 #============================================================================
