@@ -36,6 +36,11 @@ class ProxyHandler(object):
         command = self._get_function("PROXY_PRE_")
         command.execute(data=self._command_data)
 
-    def postprocess(self, _data=None):
+    def postprocess(self, _data=None, _request_data=None):
+        """
+        executes function with 2 params:
+            data: response of server;
+            request_data: client's request
+        """
         command = self._get_function("PROXY_POST_")
-        command.execute(data=_data)
+        command.execute(data=_data, request_data=_request_data)

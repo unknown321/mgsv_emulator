@@ -99,6 +99,9 @@ create table if not exists server_user(
 	in_port varchar(7),
 	nat varchar(48),
 	xnaddr varchar(48), 
+	country varchar(5),
+	lang varchar(5),
+	region int,
 	PRIMARY KEY(id)
 );
 

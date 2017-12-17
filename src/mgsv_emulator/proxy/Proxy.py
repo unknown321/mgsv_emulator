@@ -36,7 +36,7 @@ class Proxy(object):
         decoded_response = decoder.decode(result)
         logger.debug("Response from proxy server: {}".format(decoded_response))
 
-        phandler.postprocess(decoded_response)
+        phandler.postprocess(decoded_response, command_data)
         # TODO: import proxy_handler which will call command handler to process 
         # the response if needed (for example, for saving password after logging in)
         return result
