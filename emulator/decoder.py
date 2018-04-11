@@ -7,7 +7,7 @@ from . import settings
 import sys
 
 DECODE_PACK = '>l'
-if sys.maxsize > 2**32:
+if platform.system() == 'Linux' and sys.maxsize > 2**32:
 	DECODE_PACK = '>L'
 
 # D:\Users\unknown\Desktop\WiresharkPortable\App\Wireshark\tshark.exe -r J:\mgs\ssl\dump_with_a_key.cap.pcap -o ssl.keys_list:"0.0.0.0","443","http","D:\Users\unknown\Desktop\OZH.pem" -2  -Y "ip.addr == 210.149.133.135 and http" -T fields -e http.file_data > C:\testout.txt

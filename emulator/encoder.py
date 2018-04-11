@@ -9,7 +9,7 @@ from . import settings
 import sys
 
 ENCODE_PACK = '>l'
-if sys.maxsize > 2**32:
+if platform.system() == 'Linux' and sys.maxsize > 2**32:
 	ENCODE_PACK = '>L'
 
 class Encoder(object):
