@@ -18,6 +18,11 @@ urls = {
                 "CMD_GET_URLLIST"
 	],
 
+	"/tppps4/main":[
+		"CMD_GET_ABOLITION_COUNT"
+	],
+
+
 	"/tppps3/main":[
 		"CMD_AUTH_NPTICKET",
 		"CMD_REQAUTH_HTTPS_PS3",
@@ -362,8 +367,8 @@ commlist = [
 				'rqid': 0
 			},
 			'original_size': 0,
-			'session_crypto': True,
-			'session_key': -1
+			'session_crypto': False,
+			'session_key': ""
 		}
 	},
 
