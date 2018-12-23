@@ -1,9 +1,17 @@
-# mgsv_emulator
+# project moved to private gitlab instance due to various technical reasons
+
+
+
+
+-----
+
+
+
+
+## mgsv_emulator
 mgsv client/server emulator
 
 
-
-# project moved to private gitlab instance due to various technical reasons
 
 
 
@@ -11,11 +19,11 @@ Code in master is clunky and hard to extend, I am working on a better version in
 
 Types of encryption implemented: COMMON, COMPOUND.
 
-# Requirements
+## Requirements
 
 Python 3, Percona Server 5.7 (or some alternative with json support), Apache 2 + mod_wsgi or something that can handle python wsgi scripts
 
-# Encryption details
+## Encryption details
 Every message between server and client is encrypted using blowfish algorythm.
 Unfortunately it slightly differs from realisation provided here (https://www.schneier.com/academic/blowfish/download.html), so I had to rewrite it from scratch.
 
@@ -40,7 +48,7 @@ Message with compression and encryption:
 
 Encryption process is the same, but backwards.
 
-# How to use
+## How to use
 Provide your credentials in settings.py (steamid and magic_hash parsed from previously captured session). Steam_ticket is not required.
 Dump static_key from exe (or ask me very nicely).
 
@@ -53,7 +61,7 @@ Client:
 login() will automatically parse requests and save session cryptokey (so you won't have to manually use it every time).
 Afterwards, feel free to call any command available, see https://github.com/unknown321/mgsv_nuke_watcher as an example.
 
-# Server status:
+## Server status:
 
 Done:
  * CMD_GET_URLLIST
