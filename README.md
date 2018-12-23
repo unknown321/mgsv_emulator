@@ -1,6 +1,12 @@
 # mgsv_emulator
 mgsv client/server emulator
 
+
+
+# project moved to private gitlab instance due to various technical reasons
+
+
+
 Code in master is clunky and hard to extend, I am working on a better version in v2 branch.
 
 Types of encryption implemented: COMMON, COMPOUND.
