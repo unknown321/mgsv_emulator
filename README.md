@@ -1,21 +1,10 @@
-# project moved to private gitlab instance due to various technical reasons
-
-
-
-
------
-
-
-
-
 ## mgsv_emulator
-mgsv client/server emulator
-
-
-
+this is an unfinished mgsv client/server emulator. This repo has been abandoned, but you can still ask questions. 
 
 
 Code in master is clunky and hard to extend, I am working on a better version in v2 branch.
+
+Look for `*.bin` files if you need encryption keys.
 
 Types of encryption implemented: COMMON, COMPOUND.
 
@@ -37,10 +26,10 @@ Decryption process:
 
 Message with compression and encryption:
 
-    base64(
-        blowfish_static(
-            base64(
-                blowfish_session(
+    base64 (
+        blowfish_static (
+            base64 (
+                blowfish_session (
                     zlib('test')
                 )
             )
@@ -50,7 +39,6 @@ Encryption process is the same, but backwards.
 
 ## How to use
 Provide your credentials in settings.py (steamid and magic_hash parsed from previously captured session). Steam_ticket is not required.
-Dump static_key from exe (or ask me very nicely).
 
 Client:
 
