@@ -106,3 +106,7 @@ Login procedure (from start to title menu):
 
 
 completely unrelated - konami uses svn and rarely updates their webserver
+
+
+
+# hi man , i need to talk about some intresting stuff about this program , if u still active drop me your discord and approve my pull request .
