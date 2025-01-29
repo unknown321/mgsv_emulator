@@ -1,8 +1,9 @@
 ## mgsv_emulator
-this is an unfinished mgsv client/server emulator. This repo has been abandoned, but you can still ask questions. 
+this is an unfinished mgsv client/server emulator. This repo has been abandoned, but you can still ask questions.
 
+You should take a look at https://github.com/mxmstr/NucleusGameFixes and https://github.com/mxmstr/mgsv_emulator for working implementations.
 
-Code in master is clunky and hard to extend, I am working on a better version in v2 branch.
+Code in master is clunky and hard to extend, v2 branch looks a little better.
 
 Look for `*.bin` files if you need encryption keys.
 
