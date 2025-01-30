@@ -1,7 +1,13 @@
 ## mgsv_emulator
 this is an unfinished mgsv client/server emulator. This repo has been abandoned, but you can still ask questions.
 
-You should take a look at https://github.com/mxmstr/NucleusGameFixes and https://github.com/mxmstr/mgsv_emulator for working implementations.
+You should take a look at: 
+
+  - https://github.com/mxmstr/NucleusGameFixes
+  - https://github.com/mxmstr/mgsv_emulator
+  - https://github.com/alicealys/tpp-server-emulator
+
+if you are looking for working implementations.
 
 Code in master is clunky and hard to extend, v2 branch looks a little better.
 
